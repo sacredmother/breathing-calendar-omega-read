@@ -108,6 +108,22 @@ def native_clock(t: dt.time) -> dict:
         "bin72": int(bin72),
     }
 
+def unknown_second_telescope(hour24: int, minute: int) -> list[dict]:
+    """Compile all 60 lawful second-LOOKs when the source time is known only to the minute."""
+    candidates = []
+    for s in range(60):
+        t = dt.time(hour24, minute, s)
+        c = native_clock(t)
+        candidates.append({
+            "Second": s,
+            "TIME θh": round(c["time_angle"], 6),
+            "SPACE θm": round(c["space_angle"], 6),
+            "RELATIONAL": round(c["rel_angle"], 6),
+            "AND1 / TURN": round(c["turn_angle"], 6),
+            "Status": "SURVIVES",
+        })
+    return candidates
+
 def body_look(t: dt.time) -> dict:
     # Hour-addressed horizontal body LOOK. Center C does not move.
     hour = t.hour % 12
@@ -173,7 +189,7 @@ def omega_read_child(d: dt.date, t: dt.time) -> dict:
 # ---------------------------------------------------------------------
 # CANONICAL APP SURFACE
 # ---------------------------------------------------------------------
-st.title("Breathing Calendar • Ω-READ — v7.0")
+st.title("Breathing Calendar • Ω-READ — v7.1")
 st.caption(
     "Canonical Calendar laboratory + LOVE Signature child. "
     "The Sacred Heart Sphere remains a separate app."
@@ -213,7 +229,8 @@ with st.sidebar:
     hour24 = hour12 % 12
     if am_pm == "PM":
         hour24 += 12
-    chosen_time = dt.time(hour24, minute, 0)
+    chosen_time = dt.time(hour24, minute, 0)  # lower bound only; source second is UNKNOWN
+    second_known = False
 
     child_focus = st.selectbox(
         "FOCUS",
@@ -227,6 +244,9 @@ with st.sidebar:
 
 g = date_grammar(chosen_date)
 child = omega_read_child(chosen_date, chosen_time)
+second_candidates = unknown_second_telescope(hour24, minute)
+clock_lo = second_candidates[0]
+clock_hi = second_candidates[-1]
 
 a,b,c,d,e = st.columns(5)
 a.metric("Year • Field", g["year_root"])
@@ -242,7 +262,7 @@ if not status: status.append("LIVING PHASE")
 
 st.markdown(
     f"""<div class="love-card"><b>{' • '.join(status)}</b><br>
-    Same EveryNOW: <b>{chosen_date.isoformat()} {chosen_time.strftime('%H:%M:%S')}</b>.<br>
+    Same EveryNOW: <b>{chosen_date.isoformat()} {hour12}:{minute:02d} {am_pm}</b> • second = <b>I DON’T KNOW</b>.<br>
     Frozen Calendar generates its native state; Ω-READ reads the same event through additional sovereign rulers.
     Nothing in the child feeds backward into the primitive engine.
     </div>""",
@@ -250,11 +270,18 @@ st.markdown(
 )
 
 st.subheader("LOVE Signature child • live Ω-READ")
+st.caption("WHEN resolution = MINUTE. Seconds are not silently replaced by :00.")
+
 x1,x2,x3,x4 = st.columns(4)
-x1.metric("TIME θh", f"{child['clock']['time_angle']:.3f}°")
-x2.metric("SPACE θm", f"{child['clock']['space_angle']:.3f}°")
-x3.metric("RELATIONAL", f"{child['clock']['rel_angle']:+.3f}°")
-x4.metric("AND1 / TURN", f"{child['clock']['turn_angle']:.3f}°")
+x1.metric("TIME θh", f"{clock_lo['TIME θh']:.3f}° → {clock_hi['TIME θh']:.3f}°")
+x2.metric("SPACE θm", f"{clock_lo['SPACE θm']:.3f}° → {clock_hi['SPACE θm']:.3f}°")
+x3.metric("RELATIONAL", f"{clock_lo['RELATIONAL']:+.3f}° → {clock_hi['RELATIONAL']:+.3f}°")
+x4.metric("AND1 / TURN", "I DON’T KNOW")
+
+st.caption(
+    "The displayed ranges are the 60 lawful second-LOOKs inside the known minute. "
+    "AND1/TURN is unresolved because θs = 6s and no birth second was supplied."
+)
 
 b1,b2,b3,b4 = st.columns(4)
 b1.metric("Horizontal body LOOK", child["body"]["hour"])
@@ -262,7 +289,29 @@ b2.metric("Reciprocal facing", child["body"]["reciprocal"])
 b3.metric("Unoriented axis", f"{child['body']['axis']}°")
 b4.metric("Sixfold FOCUS", child["body"]["focus"])
 
-st.dataframe(child["rows"], use_container_width=True, hide_index=True)
+minute_rows = [dict(r) for r in child["rows"]]
+for r in minute_rows:
+    if r["LOOK"] in {"TIME", "SPACE", "RELATIONAL"}:
+        r["STATUS"] = "BOUNDED — SECOND UNKNOWN"
+        r["RECOVERABILITY"] = "60 native second-LOOKs retained"
+    if r["LOOK"] == "AND1 / TURN":
+        r["VALUE"] = "I DON’T KNOW"
+        r["STATUS"] = "UNRESOLVED — SECOND UNKNOWN"
+        r["RECOVERABILITY"] = "s ∈ {0…59}; θs = 6s"
+st.dataframe(minute_rows, use_container_width=True, hide_index=True)
+
+with st.expander("Unknown-Second Telescope • 60 lawful LOOKs", expanded=True):
+    st.markdown(
+        "**Recoverability status: UNRESOLVED — 60/60 survive.**  \n"
+        "The current compiler has no independent, already-wired second-sensitive ruler that can "
+        "lawfully eliminate a candidate. No personal-fit score, coincidence count, or nearest-match "
+        "rule is permitted to manufacture a second."
+    )
+    st.dataframe(second_candidates, use_container_width=True, hide_index=True)
+    st.caption(
+        "Future gate: an independent second-sensitive sovereign ruler may filter this set. "
+        "1 survivor = RECOVERED; 2–59 = BOUNDED; 60 = UNRESOLVED; 0 = FAIL / LOOK AGAIN."
+    )
 
 with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
     body_rows = []
@@ -283,6 +332,7 @@ with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
 
 st.subheader("Post-v6 FOCUS gates")
 gates = [
+    ("Source precision", True, "minute-known input preserves second as I DON’T KNOW"),
     ("Frozen primitive", date_grammar(chosen_date) == g, "child does not rewrite Calendar"),
     ("Native clock first", True, "TIME/SPACE/REL remain native angles; lossy DR labels are not primary"),
     ("REL reconstruction", abs(wrap180(child["clock"]["space_angle"]-child["clock"]["time_angle"]) - child["clock"]["rel_angle"]) < 1e-9,
@@ -793,4 +843,5 @@ The instrument can establish exact properties of its declared digital-root/mod-9
 
 It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
     ''')
+
 
