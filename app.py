@@ -16,12 +16,25 @@ st.markdown("""
 h1,h2,h3 {letter-spacing:.02em;}
 [data-testid="stSidebar"] {background: linear-gradient(180deg,#080716,#11102b);}
 .love-card {
-    border: 1px solid rgba(238,193,108,.28);
-    border-radius: 18px; padding: 14px 18px;
-    background: linear-gradient(135deg,rgba(15,12,40,.92),rgba(5,8,25,.92));
+    border: 1px solid rgba(238,193,108,.38);
+    border-radius: 18px; padding: 16px 20px;
+    background: linear-gradient(135deg,#17142f,#090b1f);
     box-shadow: 0 0 32px rgba(129,76,255,.08);
+    color: #ffffff !important;
+    line-height: 1.65;
 }
+.love-card * {color:#ffffff !important;}
 .small-note {opacity:.78;font-size:.92rem}
+.range-card {
+    border: 1px solid rgba(49,51,63,.16);
+    border-radius: 14px;
+    padding: 12px 14px;
+    min-height: 104px;
+    background: rgba(250,250,252,.72);
+}
+.range-label {font-size:.82rem; opacity:.72; margin-bottom:8px;}
+.range-value {font-size:1.55rem; font-weight:650; line-height:1.2; white-space:normal;}
+.range-note {font-size:.78rem; opacity:.65; margin-top:7px;}
 /* Sidebar readability */
 [data-testid="stSidebar"] * {color:#f4f1ff !important;}
 [data-testid="stSidebar"] input {color:#171522 !important;background-color:#ffffff !important;}
@@ -189,7 +202,7 @@ def omega_read_child(d: dt.date, t: dt.time) -> dict:
 # ---------------------------------------------------------------------
 # CANONICAL APP SURFACE
 # ---------------------------------------------------------------------
-st.title("Breathing Calendar • Ω-READ — v7.1")
+st.title("Breathing Calendar • Ω-READ — v7.2")
 st.caption(
     "Canonical Calendar laboratory + LOVE Signature child. "
     "The Sacred Heart Sphere remains a separate app."
@@ -239,8 +252,24 @@ with st.sidebar:
         index=0,
         help="FOCUS changes foreground only; it does not delete other legitimate LOOKs."
     )
+    show_second_telescope = st.checkbox(
+        "Unknown-second telescope",
+        value=True,
+        help="Compile all 60 lawful second-LOOKs when the source time is known only to the minute."
+    )
     st.divider()
     st.caption("Frozen Calendar parent • typed Ω-READ child • read-only labs")
+
+def display_candidate_range(values, signed=False):
+    vals = [float(v) for v in values]
+    # An oriented-angle set that straddles the ±180 seam should not be shown
+    # as a fake giant linear interval.
+    if signed and (max(vals) - min(vals) > 180):
+        return "crosses ±180° seam"
+    lo, hi = min(vals), max(vals)
+    if signed:
+        return f"{lo:+.3f}° → {hi:+.3f}°"
+    return f"{lo:.3f}° → {hi:.3f}°"
 
 g = date_grammar(chosen_date)
 child = omega_read_child(chosen_date, chosen_time)
@@ -272,11 +301,27 @@ st.markdown(
 st.subheader("LOVE Signature child • live Ω-READ")
 st.caption("WHEN resolution = MINUTE. Seconds are not silently replaced by :00.")
 
+time_range = display_candidate_range([r["TIME θh"] for r in second_candidates])
+space_range = display_candidate_range([r["SPACE θm"] for r in second_candidates])
+rel_range = display_candidate_range([r["RELATIONAL"] for r in second_candidates], signed=True)
+
 x1,x2,x3,x4 = st.columns(4)
-x1.metric("TIME θh", f"{clock_lo['TIME θh']:.3f}° → {clock_hi['TIME θh']:.3f}°")
-x2.metric("SPACE θm", f"{clock_lo['SPACE θm']:.3f}° → {clock_hi['SPACE θm']:.3f}°")
-x3.metric("RELATIONAL", f"{clock_lo['RELATIONAL']:+.3f}° → {clock_hi['RELATIONAL']:+.3f}°")
-x4.metric("AND1 / TURN", "I DON’T KNOW")
+with x1:
+    st.markdown(f"""<div class="range-card"><div class="range-label">TIME θh</div>
+    <div class="range-value">{time_range}</div><div class="range-note">60 second-LOOKs</div></div>""",
+    unsafe_allow_html=True)
+with x2:
+    st.markdown(f"""<div class="range-card"><div class="range-label">SPACE θm</div>
+    <div class="range-value">{space_range}</div><div class="range-note">60 second-LOOKs</div></div>""",
+    unsafe_allow_html=True)
+with x3:
+    st.markdown(f"""<div class="range-card"><div class="range-label">RELATIONAL</div>
+    <div class="range-value">{rel_range}</div><div class="range-note">oriented SPACE − TIME</div></div>""",
+    unsafe_allow_html=True)
+with x4:
+    st.markdown("""<div class="range-card"><div class="range-label">AND1 / TURN</div>
+    <div class="range-value">I DON’T KNOW</div><div class="range-note">second not supplied</div></div>""",
+    unsafe_allow_html=True)
 
 st.caption(
     "The displayed ranges are the 60 lawful second-LOOKs inside the known minute. "
@@ -300,18 +345,20 @@ for r in minute_rows:
         r["RECOVERABILITY"] = "s ∈ {0…59}; θs = 6s"
 st.dataframe(minute_rows, use_container_width=True, hide_index=True)
 
-with st.expander("Unknown-Second Telescope • 60 lawful LOOKs", expanded=True):
-    st.markdown(
-        "**Recoverability status: UNRESOLVED — 60/60 survive.**  \n"
-        "The current compiler has no independent, already-wired second-sensitive ruler that can "
-        "lawfully eliminate a candidate. No personal-fit score, coincidence count, or nearest-match "
-        "rule is permitted to manufacture a second."
-    )
-    st.dataframe(second_candidates, use_container_width=True, hide_index=True)
+if show_second_telescope:
+    st.subheader("Unknown-Second Telescope")
+    st.success("UNRESOLVED — 60 / 60 lawful second-LOOKs survive")
     st.caption(
-        "Future gate: an independent second-sensitive sovereign ruler may filter this set. "
-        "1 survivor = RECOVERED; 2–59 = BOUNDED; 60 = UNRESOLVED; 0 = FAIL / LOOK AGAIN."
+        "Nothing has selected a birth second. This telescope exposes the candidate field; "
+        "it does not score or guess."
     )
+    with st.expander("Open the 60-second candidate table", expanded=False):
+        st.dataframe(second_candidates, use_container_width=True, hide_index=True)
+        st.caption(
+            "Future gate: only an independently earned second-sensitive sovereign ruler may filter "
+            "this set. 1 survivor = RECOVERED; 2–59 = BOUNDED; 60 = UNRESOLVED; "
+            "0 = FAIL / LOOK AGAIN."
+        )
 
 with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
     body_rows = []
@@ -843,5 +890,6 @@ The instrument can establish exact properties of its declared digital-root/mod-9
 
 It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
     ''')
+
 
 
