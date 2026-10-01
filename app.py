@@ -12,16 +12,31 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-.block-container {padding-top: 1rem; padding-bottom: 2rem; max-width: 1500px;}
-h1,h2,h3 {letter-spacing:.02em;}
-[data-testid="stSidebar"] {background: linear-gradient(180deg,#080716,#11102b);}
-.love-card {
-    border: 1px solid rgba(238,193,108,.28);
-    border-radius: 18px; padding: 14px 18px;
-    background: linear-gradient(135deg,rgba(15,12,40,.92),rgba(5,8,25,.92));
-    box-shadow: 0 0 32px rgba(129,76,255,.08);
+/* Sidebar readability */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg,#080716,#11102b);
 }
-.small-note {opacity:.78;font-size:.92rem}
+
+[data-testid="stSidebar"] * {
+    color: #f4f1ff !important;
+}
+
+[data-testid="stSidebar"] input {
+    color: #171522 !important;
+    background-color: #ffffff !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"] * {
+    color: #171522 !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    background-color: #ffffff !important;
+}
+
+[data-testid="stSidebar"] hr {
+    border-color: rgba(255,255,255,.20) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
