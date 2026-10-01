@@ -12,31 +12,22 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+.block-container {padding-top: 1rem; padding-bottom: 2rem; max-width: 1500px;}
+h1,h2,h3 {letter-spacing:.02em;}
+[data-testid="stSidebar"] {background: linear-gradient(180deg,#080716,#11102b);}
+.love-card {
+    border: 1px solid rgba(238,193,108,.28);
+    border-radius: 18px; padding: 14px 18px;
+    background: linear-gradient(135deg,rgba(15,12,40,.92),rgba(5,8,25,.92));
+    box-shadow: 0 0 32px rgba(129,76,255,.08);
+}
+.small-note {opacity:.78;font-size:.92rem}
 /* Sidebar readability */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg,#080716,#11102b);
-}
-
-[data-testid="stSidebar"] * {
-    color: #f4f1ff !important;
-}
-
-[data-testid="stSidebar"] input {
-    color: #171522 !important;
-    background-color: #ffffff !important;
-}
-
-[data-testid="stSidebar"] [data-baseweb="select"] * {
-    color: #171522 !important;
-}
-
-[data-testid="stSidebar"] [data-baseweb="select"] > div {
-    background-color: #ffffff !important;
-}
-
-[data-testid="stSidebar"] hr {
-    border-color: rgba(255,255,255,.20) !important;
-}
+[data-testid="stSidebar"] * {color:#f4f1ff !important;}
+[data-testid="stSidebar"] input {color:#171522 !important;background-color:#ffffff !important;}
+[data-testid="stSidebar"] [data-baseweb="select"] * {color:#171522 !important;}
+[data-testid="stSidebar"] [data-baseweb="select"] > div {background-color:#ffffff !important;}
+[data-testid="stSidebar"] hr {border-color:rgba(255,255,255,.20) !important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -190,44 +181,40 @@ st.caption(
 
 with st.sidebar:
     st.header("HERE + WHEN")
-   date_text = st.text_input(
-    "Date YYYY-MM-DD",
-    value=dt.date.today().isoformat()
-)
-chosen_date = parse_date(date_text)
+    date_text = st.text_input("Date YYYY-MM-DD", value=dt.date.today().isoformat())
+    chosen_date = parse_date(date_text)
 
-st.markdown("#### Time")
+    st.markdown("#### Time")
+    now = dt.datetime.now()
+    tc1, tc2, tc3 = st.columns([1, 1, 1])
 
-now = dt.datetime.now()
-tc1, tc2, tc3 = st.columns([1, 1, 1])
+    with tc1:
+        hour12 = st.selectbox(
+            "Hour",
+            list(range(1, 13)),
+            index=(now.hour % 12 or 12) - 1,
+        )
 
-with tc1:
-    hour12 = st.selectbox(
-        "Hour",
-        list(range(1, 13)),
-        index=(now.hour % 12 or 12) - 1
-    )
+    with tc2:
+        minute = st.selectbox(
+            "Minute",
+            list(range(60)),
+            index=now.minute,
+            format_func=lambda x: f"{x:02d}",
+        )
 
-with tc2:
-    minute = st.selectbox(
-        "Minute",
-        list(range(60)),
-        index=now.minute,
-        format_func=lambda x: f"{x:02d}"
-    )
+    with tc3:
+        am_pm = st.selectbox(
+            "AM / PM",
+            ["AM", "PM"],
+            index=0 if now.hour < 12 else 1,
+        )
 
-with tc3:
-    am_pm = st.selectbox(
-        "AM / PM",
-        ["AM", "PM"],
-        index=0 if now.hour < 12 else 1
-    )
+    hour24 = hour12 % 12
+    if am_pm == "PM":
+        hour24 += 12
+    chosen_time = dt.time(hour24, minute, 0)
 
-hour24 = hour12 % 12
-if am_pm == "PM":
-    hour24 += 12
-
-chosen_time = dt.time(hour24, minute, 0)
     child_focus = st.selectbox(
         "FOCUS",
         ["Ω-READ", "Calendar", "Clock", "Embodied body", "Audit laboratory",
@@ -806,3 +793,4 @@ The instrument can establish exact properties of its declared digital-root/mod-9
 
 It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
     ''')
+
