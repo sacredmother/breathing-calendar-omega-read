@@ -190,10 +190,44 @@ st.caption(
 
 with st.sidebar:
     st.header("HERE + WHEN")
-    date_text = st.text_input("Date YYYY-MM-DD", value=dt.date.today().isoformat())
-    time_text = st.text_input("Time HH:MM[:SS]", value=dt.datetime.now().strftime("%H:%M:%S"))
-    chosen_date = parse_date(date_text)
-    chosen_time = parse_clock(time_text)
+   date_text = st.text_input(
+    "Date YYYY-MM-DD",
+    value=dt.date.today().isoformat()
+)
+chosen_date = parse_date(date_text)
+
+st.markdown("#### Time")
+
+now = dt.datetime.now()
+tc1, tc2, tc3 = st.columns([1, 1, 1])
+
+with tc1:
+    hour12 = st.selectbox(
+        "Hour",
+        list(range(1, 13)),
+        index=(now.hour % 12 or 12) - 1
+    )
+
+with tc2:
+    minute = st.selectbox(
+        "Minute",
+        list(range(60)),
+        index=now.minute,
+        format_func=lambda x: f"{x:02d}"
+    )
+
+with tc3:
+    am_pm = st.selectbox(
+        "AM / PM",
+        ["AM", "PM"],
+        index=0 if now.hour < 12 else 1
+    )
+
+hour24 = hour12 % 12
+if am_pm == "PM":
+    hour24 += 12
+
+chosen_time = dt.time(hour24, minute, 0)
     child_focus = st.selectbox(
         "FOCUS",
         ["Ω-READ", "Calendar", "Clock", "Embodied body", "Audit laboratory",
