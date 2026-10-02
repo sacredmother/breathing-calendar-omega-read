@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide",
 )
 
-APP_VERSION = "7.5"
+APP_VERSION = "7.6"
 
 st.markdown("""
 <style>
@@ -32,11 +32,21 @@ h1,h2,h3 {letter-spacing:.02em;}
     border-radius: 14px;
     padding: 12px 14px;
     min-height: 104px;
-    background: rgba(250,250,252,.72);
+    background: linear-gradient(135deg,#171b24,#11151d);
+    color: #f7f7fb !important;
 }
-.range-label {font-size:.82rem; opacity:.72; margin-bottom:8px;}
-.range-value {font-size:1.55rem; font-weight:650; line-height:1.2; white-space:normal;}
-.range-note {font-size:.78rem; opacity:.65; margin-top:7px;}
+.range-card * {color:#f7f7fb !important;}
+.range-label {font-size:.82rem; color:#c7cbd4 !important; margin-bottom:8px;}
+.range-value {font-size:1.55rem; font-weight:650; line-height:1.25; white-space:normal; overflow-wrap:anywhere;}
+.range-note {font-size:.82rem; color:#c7cbd4 !important; margin-top:7px; line-height:1.45;}
+.clock-card {
+    border:1px solid rgba(120,130,155,.32); border-radius:14px; padding:14px 16px;
+    background:linear-gradient(135deg,#171b24,#11151d); min-height:132px; color:#fff !important;
+}
+.clock-card * {color:#fff !important;}
+.clock-label {font-size:.82rem; color:#c7cbd4 !important; margin-bottom:7px;}
+.clock-value {font-size:1.55rem; font-weight:700; line-height:1.25; overflow-wrap:anywhere;}
+.clock-note {font-size:.80rem; color:#c7cbd4 !important; margin-top:8px; line-height:1.4;}
 /* Sidebar readability */
 [data-testid="stSidebar"] * {color:#f4f1ff !important;}
 [data-testid="stSidebar"] input {color:#171522 !important;background-color:#ffffff !important;}
@@ -270,7 +280,7 @@ def circular_range_text(start:float,width:float,signed=False)->str:
 # ---------------------------------------------------------------------
 # CANONICAL APP SURFACE
 # ---------------------------------------------------------------------
-st.title("Breathing Calendar • Ω-READ — v7.4")
+st.title(f"Breathing Calendar • Ω-READ — v{APP_VERSION}")
 st.caption(
     "Canonical Calendar laboratory + LOVE Signature child. "
     "The Sacred Heart Sphere remains a separate app."
@@ -394,9 +404,17 @@ with b2: st.info(f"WHAT THIS MEANS — {child['body']['hour']} is the directed h
 
 st.markdown("### Native clock geometry • visible, not hidden")
 time_range=circular_range_text(minute_trajectory['time_start'],.5); space_range=circular_range_text(minute_trajectory['space_start'],6.0); rel_range=circular_range_text(minute_trajectory['raw_rel_start'],5.5,True)
-q1,q2,q3,q4=st.columns(4)
-q1.metric("TIME / WHEN θh",time_range); q2.metric("SPACE / HERE θm",space_range); q3.metric("RELATIONAL Δ",rel_range); q4.metric("AND1 • BEAT–TURN","PRESENT")
-st.caption("Left edge = exact minute-boundary coordinate. With the recorded second unknown, birth phase lies somewhere on ONE continuous half-open trajectory. BEAT–TURN law is known; exact birth θs is I DON’T KNOW.")
+q1,q2=st.columns(2)
+with q1:
+    st.markdown(f"""<div class="clock-card"><div class="clock-label">TIME / WHEN θh</div><div class="clock-value">{time_range}</div><div class="clock-note">Hour-hand position across the unknown birth second.</div></div>""", unsafe_allow_html=True)
+with q2:
+    st.markdown(f"""<div class="clock-card"><div class="clock-label">SPACE / HERE θm</div><div class="clock-value">{space_range}</div><div class="clock-note">Minute-hand position across the same unknown second.</div></div>""", unsafe_allow_html=True)
+q3,q4=st.columns(2)
+with q3:
+    st.markdown(f"""<div class="clock-card"><div class="clock-label">RELATIONAL Δ = SPACE − TIME</div><div class="clock-value">{rel_range}</div><div class="clock-note">Oriented relationship; not a third independent clock hand.</div></div>""", unsafe_allow_html=True)
+with q4:
+    st.markdown("""<div class="clock-card"><div class="clock-label">AND1 • BEAT–TURN</div><div class="clock-value">PRESENT</div><div class="clock-note">Law known • exact birth phase I DON’T KNOW because seconds were not recorded.</div></div>""", unsafe_allow_html=True)
+st.caption("Each interval is half-open: the left edge is the exact minute-boundary coordinate; the right edge is approached but not included. ONE continuous trajectory contains the unknown birth phase.")
 
 st.markdown("### WHAT THIS EVERYNOW FOREGROUNDS")
 f1,f2,f3,f4=st.columns(4)
