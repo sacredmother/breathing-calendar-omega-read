@@ -228,7 +228,7 @@ def omega_read_child(d: dt.date, t: dt.time) -> dict:
 # ---------------------------------------------------------------------
 # CANONICAL APP SURFACE
 # ---------------------------------------------------------------------
-st.title("Breathing Calendar • Ω-READ — v7.3")
+st.title("Breathing Calendar • Ω-READ — v7.4")
 st.caption(
     "Canonical Calendar laboratory + LOVE Signature child. "
     "The Sacred Heart Sphere remains a separate app."
@@ -279,9 +279,9 @@ with st.sidebar:
         help="FOCUS changes foreground only; it does not delete other legitimate LOOKs."
     )
     show_second_telescope = st.checkbox(
-        "Unknown-second telescope",
-        value=True,
-        help="Compile all 60 lawful second-LOOKs when the source time is known only to the minute."
+        "Open telescope",
+        value=False,
+        help="Optional magnification of the unknown-second clock phase. The primary Ω-READ remains visible without it."
     )
     st.divider()
     st.caption("Frozen Calendar parent • typed Ω-READ child • read-only labs")
@@ -325,44 +325,57 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.subheader("LOVE Signature child • live Ω-READ")
-st.caption("WHEN resolution = MINUTE. Seconds are not silently replaced by :00.")
-
-time_range = f"{minute_trajectory['time_start']:.3f}° → {minute_trajectory['time_end']:.3f}° (end open)"
-space_range = f"{minute_trajectory['space_start']:.3f}° → {minute_trajectory['space_end']:.3f}° (end open)"
-if minute_trajectory["rel_crosses_seam"]:
-    rel_range = "crosses ±180° seam — inspect samples"
-else:
-    rel_range = f"{minute_trajectory['raw_rel_start']:+.3f}° → {minute_trajectory['raw_rel_end']:+.3f}° (end open)"
-
-x1,x2,x3,x4 = st.columns(4)
-with x1:
-    st.markdown(f"""<div class="range-card"><div class="range-label">TIME θh</div>
-    <div class="range-value">{time_range}</div><div class="range-note">continuous minute trajectory</div></div>""",
-    unsafe_allow_html=True)
-with x2:
-    st.markdown(f"""<div class="range-card"><div class="range-label">SPACE θm</div>
-    <div class="range-value">{space_range}</div><div class="range-note">continuous minute trajectory</div></div>""",
-    unsafe_allow_html=True)
-with x3:
-    st.markdown(f"""<div class="range-card"><div class="range-label">RELATIONAL</div>
-    <div class="range-value">{rel_range}</div><div class="range-note">oriented SPACE − TIME</div></div>""",
-    unsafe_allow_html=True)
-with x4:
-    st.markdown("""<div class="range-card"><div class="range-label">AND1 / BEAT–TURN</div>
-    <div class="range-value">PRESENT</div><div class="range-note">birth phase unresolved</div></div>""",
-    unsafe_allow_html=True)
-
+st.subheader("Your Ω-READ")
 st.caption(
-    "Source precision is MINUTE. The native clock therefore gives ONE continuous BEAT–TURN "
-    "trajectory with unknown birth phase; :00 is not silently assigned as the birth second."
+    f"{chosen_date.strftime('%B %d, %Y')} • {hour12}:{minute:02d} {am_pm} • source precision: MINUTE"
 )
 
-b1,b2,b3,b4 = st.columns(4)
-b1.metric("Horizontal body LOOK", child["body"]["hour"])
-b2.metric("Reciprocal facing", child["body"]["reciprocal"])
-b3.metric("Unoriented axis", f"{child['body']['axis']}°")
-b4.metric("Sixfold FOCUS", child["body"]["focus"])
+# Human-facing FOCUS: foreground what is stable before magnifying the unresolved edge.
+st.markdown("### Stable through the unknown second")
+s1,s2,s3 = st.columns(3)
+with s1:
+    st.markdown(
+        f"""<div class="range-card"><div class="range-label">BODY LOOK</div>
+        <div class="range-value">{child["body"]["hour"]} ↔ {child["body"]["reciprocal"]}</div>
+        <div class="range-note">{child["body"]["axis"]}° axis • FOCUS {child["body"]["focus"]}</div></div>""",
+        unsafe_allow_html=True
+    )
+with s2:
+    st.markdown(
+        f"""<div class="range-card"><div class="range-label">CALENDAR LOOK</div>
+        <div class="range-value">DateRoot {g["date_root"]}</div>
+        <div class="range-note">Year {g["year_root"]} • Month {g["month_root"]} • Day {g["day_root"]} • Pair {g["pair_label"]}</div></div>""",
+        unsafe_allow_html=True
+    )
+with s3:
+    st.markdown(
+        f"""<div class="range-card"><div class="range-label">CLOCK RESOLUTION</div>
+        <div class="range-value">72-bin {child["clock"]["bin72"]}</div>
+        <div class="range-note">exact coarse-grain at minute precision</div></div>""",
+        unsafe_allow_html=True
+    )
+
+st.markdown("### Phase-sensitive within this minute")
+p1,p2 = st.columns([2,1])
+with p1:
+    st.markdown(
+        """<div class="range-card"><div class="range-label">TIME • SPACE • RELATIONAL</div>
+        <div class="range-value">ONE known trajectory</div>
+        <div class="range-note">Their fine angles move together with the unknown second. They are not three independent uncertainties.</div></div>""",
+        unsafe_allow_html=True
+    )
+with p2:
+    st.markdown(
+        """<div class="range-card"><div class="range-label">AND1 • BEAT–TURN</div>
+        <div class="range-value">PRESENT</div>
+        <div class="range-note">exact birth phase: I DON’T KNOW</div></div>""",
+        unsafe_allow_html=True
+    )
+
+st.info(
+    "READ — The missing second does not erase this Ω-READ. It limits only the finest native-clock phase resolution. "
+    "The stable calendar, body, and coarse clock addresses above remain readable across the entire known minute."
+)
 
 minute_rows = [dict(r) for r in child["rows"]]
 for r in minute_rows:
@@ -373,48 +386,65 @@ for r in minute_rows:
         r["VALUE"] = "PRESENT — θs = 6s"
         r["STATUS"] = "BEAT–TURN LOCKED • BIRTH PHASE I DON’T KNOW"
         r["RECOVERABILITY"] = "full 360° phase available; birth θs unresolved"
-st.dataframe(minute_rows, use_container_width=True, hide_index=True)
+
+with st.expander("Audit / provenance", expanded=False):
+    st.caption(
+        "Typed compiler evidence. Source rulers remain sovereign; unknown-second status is attached only where that precision matters."
+    )
+    st.dataframe(minute_rows, use_container_width=True, hide_index=True)
 
 if show_second_telescope:
-    st.subheader("Unknown-Second Ω-READ")
-    st.success("ONE BEAT–TURN TRAJECTORY • BIRTH PHASE UNRESOLVED")
+    st.markdown("---")
+    st.subheader("Telescope • unknown-second magnification")
     st.caption(
-        "BEAT and TURN remain simultaneous: θs = 6s. The unknown source second removes the "
-        "birth-phase address, not the lawful BEAT–TURN relation."
+        "Optional microscope. It magnifies the unresolved native-clock phase; it does not replace the Ω-READ above."
     )
 
-    u1,u2,u3 = st.columns(3)
-    u1.metric("Available BEAT–TURN phase", "360°")
-    u2.metric("Birth phase", "I DON’T KNOW")
-    u3.metric("Degrees of freedom", "1 • unknown s")
+    time_range = f"{minute_trajectory['time_start']:.3f}° → <{minute_trajectory['time_end']:.3f}°"
+    space_range = f"{minute_trajectory['space_start']:.3f}° → <{minute_trajectory['space_end']:.3f}°"
+    if minute_trajectory["rel_crosses_seam"]:
+        rel_range = "crosses ±180° seam"
+    else:
+        rel_range = f"{minute_trajectory['raw_rel_start']:+.3f}° → <{minute_trajectory['raw_rel_end']:+.3f}°"
+
+    q1,q2,q3 = st.columns(3)
+    q1.metric("TIME θh", time_range)
+    q2.metric("SPACE θm", space_range)
+    q3.metric("RELATIONAL", rel_range)
 
     st.markdown(
-        f"""<div class="love-card"><b>Native trajectory • exact at minute precision</b><br>
-        0 ≤ s &lt; 60<br>
-        θs = 6s<br>
-        θh = {minute_trajectory['time_start']:.3f}° + s/120<br>
-        θm = {minute_trajectory['space_start']:.3f}° + s/10<br>
-        {"Δθhm crosses the ±180° presentation seam in this minute; preserve wrapped orientation." if minute_trajectory["rel_crosses_seam"] else f"Δθhm = {minute_trajectory['raw_rel_start']:+.3f}° + 11s/120"}<br><br>
-        <b>Local trajectory invariant</b><br>
-        θm − 12θh = {minute_trajectory['local_invariant']:.3f}°<br>
-        <span style="font-size:.88rem;">Exact for this unwrapped minute trajectory; not promoted as a universal Ω constant.</span>
+        """<div class="love-card"><b>AND1 • BEAT–TURN</b><br>
+        PRESENT • θs = 6s<br>
+        Available phase across the source minute: 360°<br>
+        Exact birth phase: <b>I DON’T KNOW</b><br><br>
+        <span style="font-size:.90rem;">The 60 integer-second addresses below are samples of ONE continuous trajectory, not 60 separate realities.</span>
         </div>""",
         unsafe_allow_html=True
     )
 
-    st.info(
-        "RECOVERABILITY — 60 / 60 integer-second samples remain admissible. "
-        "They are microscope samples of ONE continuous trajectory, not 60 separate realities. "
-        "An independently known injective phase-sensitive native value would recover s and "
-        "therefore the other native clock coordinates."
-    )
+    with st.expander("Telescope math / recoverability", expanded=False):
+        st.markdown(
+            f"""0 ≤ s < 60
 
-    with st.expander("Open 60 integer-second samples of the ONE trajectory", expanded=False):
+θs = 6s
+
+θh = {minute_trajectory['time_start']:.3f}° + s/120
+
+θm = {minute_trajectory['space_start']:.3f}° + s/10
+
+{"Δθhm crosses the ±180° presentation seam in this minute; preserve wrapped orientation." if minute_trajectory["rel_crosses_seam"] else f"Δθhm = {minute_trajectory['raw_rel_start']:+.3f}° + 11s/120"}
+
+Local trajectory invariant: θm − 12θh = {minute_trajectory['local_invariant']:.3f}°
+
+This invariant is exact for this unwrapped minute trajectory; it is not promoted as a universal Ω constant.
+
+Recoverability: 60 / 60 integer-second samples remain admissible. An independently known injective phase-sensitive native value would recover s and therefore the other native clock coordinates."""
+        )
+
+    with st.expander("60 integer-second samples", expanded=False):
         st.dataframe(second_candidates, use_container_width=True, hide_index=True)
         st.caption(
-            "No sample is ranked or selected. The table samples s = 0…59 only; the source "
-            "precision remains continuous over 0 ≤ s < 60. Winding history at the birth instant "
-            "is not recovered from minute precision alone."
+            "No sample is ranked or selected. The source precision remains continuous over 0 ≤ s < 60."
         )
 
 with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
@@ -947,6 +977,7 @@ The instrument can establish exact properties of its declared digital-root/mod-9
 
 It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
     ''')
+
 
 
 
