@@ -10,6 +10,8 @@ st.set_page_config(
     layout="wide",
 )
 
+APP_VERSION = "7.5"
+
 st.markdown("""
 <style>
 .block-container {padding-top: 1rem; padding-bottom: 2rem; max-width: 1500px;}
@@ -226,6 +228,46 @@ def omega_read_child(d: dt.date, t: dt.time) -> dict:
     return {"calendar": g, "clock": c, "body": b, "rows": rows}
 
 # ---------------------------------------------------------------------
+# EARNED LOVE SIGNATURE READS — read-only overlays on the frozen primitive
+# ---------------------------------------------------------------------
+MONTH_LANES={1:"Capricorn",2:"Aquarius",3:"Pisces",4:"Aries",5:"Taurus",6:"Gemini",7:"Cancer",8:"Leo",9:"Virgo",10:"Libra",11:"Scorpio",12:"Sagittarius"}
+GATE_LANES={"SE→SS":"Aries / Spring Gate","SS→FE":"Cancer / Summer Gate","FE→WS":"Libra / Fall Gate","WS→SE":"Capricorn / Winter Gate"}
+
+def cadence_36(d:dt.date,t:dt.time)->dict:
+    event=dt.datetime.combine(d,t); y=event.year; hinge=dt.datetime(y,9,23,2,55)
+    cycle_index=math.floor((y-1990-(1 if event<hinge else 0))/36)
+    start=dt.datetime(1990+36*cycle_index,9,23,2,55); end=dt.datetime(start.year+36,9,23,2,55)
+    year36=event.year-start.year+(1 if event>=dt.datetime(event.year,9,23,2,55) else 0)
+    return {"start":start,"end":end,"year36":year36,"octave":math.ceil(year36/4),"year_in_octave":((year36-1)%4)+1}
+
+def seasonal_read(d:dt.date)->dict:
+    md=(d.month,d.day)
+    if (3,20)<=md<(6,21): gate="SE→SS"
+    elif (6,21)<=md<(9,22): gate="SS→FE"
+    elif (9,22)<=md<(12,21): gate="FE→WS"
+    else: gate="WS→SE"
+    return {"month_lane":MONTH_LANES[d.month],"gate":gate,"gate_lane":GATE_LANES[gate]}
+
+def display_time_root(hour12:int,minute:int)->int:
+    return digital_root(digit_sum(hour12)+digit_sum(minute))
+
+def minute_position_12h(hour24:int,minute:int)->int:
+    return ((hour24%12)*60+minute)%720
+
+def digit_address_decimal(x:float)->int:
+    txt=f"{abs(x):.6f}".rstrip("0").rstrip(".")
+    return sum(int(ch) for ch in txt if ch.isdigit())
+
+def circular_range_text(start:float,width:float,signed=False)->str:
+    if signed:
+        a=wrap180(start); b=wrap180(start+width)
+        if abs((a+width)-b)>1e-9: return f"{a:+.3f}° → +180.000° AND −180.000° → <{b:+.3f}°"
+        return f"{a:+.3f}° → <{b:+.3f}°"
+    a=start%360; b=(start+width)%360
+    if a+width>=360: return f"{a:.3f}° → 360.000° AND 0.000° → <{b:.3f}°"
+    return f"{a:.3f}° → <{b:.3f}°"
+
+# ---------------------------------------------------------------------
 # CANONICAL APP SURFACE
 # ---------------------------------------------------------------------
 st.title("Breathing Calendar • Ω-READ — v7.4")
@@ -325,106 +367,72 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.subheader("Your Ω-READ")
-st.caption(
-    f"{chosen_date.strftime('%B %d, %Y')} • {hour12}:{minute:02d} {am_pm} • source precision: MINUTE"
-)
+st.subheader("WHERE YOU LANDED HERE IN THE BREATH")
+st.caption(f"{chosen_date.strftime('%B %d, %Y')} • {hour12}:{minute:02d} {am_pm} • source precision: MINUTE • Ω-READ v{APP_VERSION}")
 
-# Human-facing FOCUS: foreground what is stable before magnifying the unresolved edge.
-st.markdown("### Stable through the unknown second")
-s1,s2,s3 = st.columns(3)
-with s1:
-    st.markdown(
-        f"""<div class="range-card"><div class="range-label">BODY LOOK</div>
-        <div class="range-value">{child["body"]["hour"]} ↔ {child["body"]["reciprocal"]}</div>
-        <div class="range-note">{child["body"]["axis"]}° axis • FOCUS {child["body"]["focus"]}</div></div>""",
-        unsafe_allow_html=True
-    )
-with s2:
-    st.markdown(
-        f"""<div class="range-card"><div class="range-label">CALENDAR LOOK</div>
-        <div class="range-value">DateRoot {g["date_root"]}</div>
-        <div class="range-note">Year {g["year_root"]} • Month {g["month_root"]} • Day {g["day_root"]} • Pair {g["pair_label"]}</div></div>""",
-        unsafe_allow_html=True
-    )
-with s3:
-    st.markdown(
-        f"""<div class="range-card"><div class="range-label">CLOCK RESOLUTION</div>
-        <div class="range-value">72-bin {child["clock"]["bin72"]}</div>
-        <div class="range-note">exact coarse-grain at minute precision</div></div>""",
-        unsafe_allow_html=True
-    )
+cad=cadence_36(chosen_date,chosen_time); season=seasonal_read(chosen_date)
+pos12=minute_position_12h(hour24,minute); time_dr=display_time_root(hour12,minute); pos_dr=digital_root(digit_sum(pos12))
+synthesis=g["date_root"]+pos_dr+time_dr
 
-st.markdown("### Phase-sensitive within this minute")
-p1,p2 = st.columns([2,1])
-with p1:
-    st.markdown(
-        """<div class="range-card"><div class="range-label">TIME • SPACE • RELATIONAL</div>
-        <div class="range-value">ONE known trajectory</div>
-        <div class="range-note">Their fine angles move together with the unknown second. They are not three independent uncertainties.</div></div>""",
-        unsafe_allow_html=True
-    )
-with p2:
-    st.markdown(
-        """<div class="range-card"><div class="range-label">AND1 • BEAT–TURN</div>
-        <div class="range-value">PRESENT</div>
-        <div class="range-note">exact birth phase: I DON’T KNOW</div></div>""",
-        unsafe_allow_html=True
-    )
+st.markdown("### 36-year Breath • nested cadence address")
+c1,c2,c3=st.columns(3)
+c1.metric("Year in 36-year Breath",f"{cad['year36']} / 36")
+c2.metric("4-year Octave",f"{cad['octave']} / 9")
+c3.metric("Year in Octave",f"{cad['year_in_octave']} / 4")
+st.caption(f"Container: {cad['start'].strftime('%Y-%m-%d %H:%M')} → {cad['end'].strftime('%Y-%m-%d %H:%M')}. Calendar cadence ruler; not the separate 18/36 chassis ruler.")
 
-st.info(
-    "READ — The missing second does not erase this Ω-READ. It limits only the finest native-clock phase resolution. "
-    "The stable calendar, body, and coarse clock addresses above remain readable across the entire known minute."
-)
+st.markdown("### Calendar + seasonal HERE")
+k1,k2,k3=st.columns(3)
+with k1: st.markdown(f'''<div class="range-card"><div class="range-label">CALENDAR ROOT CONSTELLATION</div><div class="range-value">{g['month_root']} | {g['day_root']} | {g['year_root']} → {g['date_root']}</div><div class="range-note">Month • Day • Year remain recoverable; DateRoot does not replace them.</div></div>''',unsafe_allow_html=True)
+with k2: st.markdown(f'''<div class="range-card"><div class="range-label">MONTH LANE AND GATE</div><div class="range-value">{season['month_lane']} AND {season['gate_lane']}</div><div class="range-note">{season['gate']} • sovereign resolutions of the same date.</div></div>''',unsafe_allow_html=True)
+with k3: st.markdown(f'''<div class="range-card"><div class="range-label">CLOCK RESOLUTION</div><div class="range-value">72-bin {child['clock']['bin72']}</div><div class="range-note">10-minute coarse address; resolution ≠ native angle.</div></div>''',unsafe_allow_html=True)
 
-minute_rows = [dict(r) for r in child["rows"]]
+st.markdown("### Embodied HERE")
+b1,b2=st.columns([1,2])
+with b1: st.markdown(f'''<div class="range-card"><div class="range-label">BODY LOOK</div><div class="range-value">{child['body']['hour']} ↔ {child['body']['reciprocal']} • {child['body']['axis']}° axis</div><div class="range-note">FOCUS {child['body']['focus']} • horizontal support through invariant C.</div></div>''',unsafe_allow_html=True)
+with b2: st.info(f"WHAT THIS MEANS — {child['body']['hour']} is the directed hour-facing foregrounded by the birth hour; {child['body']['reciprocal']} is its opposite facing through the same Center. {child['body']['axis']}° is their shared unoriented support axis. FOCUS {child['body']['focus']} names the {'even' if child['body']['focus']=='A' else 'odd'}-hour interleaved sixfold presentation; it is not a personality type.")
+
+st.markdown("### Native clock geometry • visible, not hidden")
+time_range=circular_range_text(minute_trajectory['time_start'],.5); space_range=circular_range_text(minute_trajectory['space_start'],6.0); rel_range=circular_range_text(minute_trajectory['raw_rel_start'],5.5,True)
+q1,q2,q3,q4=st.columns(4)
+q1.metric("TIME / WHEN θh",time_range); q2.metric("SPACE / HERE θm",space_range); q3.metric("RELATIONAL Δ",rel_range); q4.metric("AND1 • BEAT–TURN","PRESENT")
+st.caption("Left edge = exact minute-boundary coordinate. With the recorded second unknown, birth phase lies somewhere on ONE continuous half-open trajectory. BEAT–TURN law is known; exact birth θs is I DON’T KNOW.")
+
+st.markdown("### WHAT THIS EVERYNOW FOREGROUNDS")
+f1,f2,f3,f4=st.columns(4)
+f1.metric("DATE",g['date_root'],"whole-date root"); f2.metric("TIME display",time_dr,f"{hour12}:{minute:02d} digit LOOK"); f3.metric("CLOCK position",pos_dr,f"{pos12} min → {pos_dr}"); f4.metric("SYNTHESIS LOOK",synthesis,f"{g['date_root']} + {pos_dr} + {time_dr}")
+st.markdown(f'''<div class="love-card"><b>{g['date_root']} AND {pos_dr} AND {time_dr} → {synthesis}</b><br>This is an arithmetic synthesis LOOK of three source-retaining reads: DATE, displayed TIME, and 12-hour clock position. <b>{synthesis} does not replace its operands.</b> Equal visible numbers on other rulers remain correspondence until an exact bridge is earned.</div>''',unsafe_allow_html=True)
+
+st.markdown("### LOOK DEEPER • same EveryNOW, changed resolution")
+left=minute_trajectory['time_start']; rel0=abs(wrap180(minute_trajectory['raw_rel_start'])); tl=digit_address_decimal(left); rl=digit_address_decimal(rel0)
+d1,d2,d3=st.columns(3)
+d1.metric("TIME boundary → label-address",tl,f"{left:.3f}° → {tl}"); d2.metric("REL boundary → label-address",rl,f"|{wrap180(minute_trajectory['raw_rel_start']):+.3f}°| → {rl}"); d3.metric("Clock position → label-address",pos_dr,f"{pos12} → {pos_dr}")
+st.caption("Optional lossy label-address projections of already-derived native quantities; they never replace native geometry. D12 is Depth / reciprocal magnification LOOKING through—not joining—the D13–D18 sixfold packet.")
+
+st.markdown("### LOOK RECIPROCALLY • girdle telescope")
+girdle={1:4,4:1,2:3,3:2,5:9,9:5,6:8,8:6,7:7}; fore=(g['month_root'],g['year_root'],g['date_root']); recip=tuple(girdle[x] for x in fore)
+r1,r2=st.columns(2); r1.metric("Foreground"," | ".join(map(str,fore)),f"sum {sum(fore)}"); r2.metric("Reciprocal girdle LOOK"," | ".join(map(str,recip)),f"sum {sum(recip)}")
+st.caption("Declared girdle dyads: 1↔4, 2↔3, 5↔9, 6↔8, 7↔7. Reciprocal LOOK preserves the foreground. Sums are arithmetic projections only; no further identity is claimed.")
+st.info("FOCUS — foreground without deletion. Cadence, seasonal gate, body support, native clock geometry, synthesis and reciprocal girdle are differentiated LOOKs of ONE arrival. No master score is created.")
+
+minute_rows=[dict(r) for r in child['rows']]
 for r in minute_rows:
-    if r["LOOK"] in {"TIME", "SPACE", "RELATIONAL"}:
-        r["STATUS"] = "EXACT TRAJECTORY — BIRTH PHASE UNKNOWN"
-        r["RECOVERABILITY"] = "ONE continuous s ∈ [0,60) trajectory; 60 integer-second samples admissible"
-    if r["LOOK"] == "AND1 / TURN":
-        r["VALUE"] = "PRESENT — θs = 6s"
-        r["STATUS"] = "BEAT–TURN LOCKED • BIRTH PHASE I DON’T KNOW"
-        r["RECOVERABILITY"] = "full 360° phase available; birth θs unresolved"
+    if r['LOOK'] in {'TIME','SPACE','RELATIONAL'}: r['STATUS']='EXACT TRAJECTORY — BIRTH PHASE UNKNOWN'; r['RECOVERABILITY']='ONE continuous s ∈ [0,60) trajectory'
+    if r['LOOK']=='AND1 / TURN': r['VALUE']='PRESENT — θs = 6s'; r['STATUS']='BEAT–TURN LOCKED • BIRTH PHASE I DON’T KNOW'; r['RECOVERABILITY']='full 360° phase available; birth θs unresolved'
 
-with st.expander("Audit / provenance", expanded=False):
-    st.caption(
-        "Typed compiler evidence. Source rulers remain sovereign; unknown-second status is attached only where that precision matters."
-    )
-    st.dataframe(minute_rows, use_container_width=True, hide_index=True)
+with st.expander("LOOK DEEPER • dimensional correspondence rail",expanded=False):
+    st.dataframe([{"Address":"D18 → 9","Presentation":"Ain / No Thing"},{"Address":"D17 → 8","Presentation":"Ain Sof / limitless potential"},{"Address":"D16 → 7","Presentation":"Ain Sof Aur / limitless Light"},{"Address":"D15 → 6","Presentation":"Living Pulse"},{"Address":"D14 → 5","Presentation":"hidden Length"},{"Address":"D13 → 4","Presentation":"Width"},{"Address":"D12","Presentation":"Depth / reciprocal magnification lens — NOT packet member seven"}],use_container_width=True,hide_index=True)
+    st.warning("Correspondence guard — a clock/date value that visibly matches a dimensional address is not thereby identical to that dimensional function. Source rulers remain attached.")
+    st.write("12→16 / 22.5° LIFT: ruler architecture earned; this event's birth-specific typed address is not compiled here.")
+    st.write("18-half-octave / 36 chassis: ruler architecture earned; this event's birth-specific typed 18-address is not compiled here. Calendar Year-in-36 above is a different ruler.")
+
+with st.expander("Audit / provenance",expanded=False): st.dataframe(minute_rows,use_container_width=True,hide_index=True)
 
 if show_second_telescope:
-    st.markdown("---")
-    st.subheader("Telescope • unknown-second magnification")
-    st.caption(
-        "Optional microscope. It magnifies the unresolved native-clock phase; it does not replace the Ω-READ above."
-    )
-
-    time_range = f"{minute_trajectory['time_start']:.3f}° → <{minute_trajectory['time_end']:.3f}°"
-    space_range = f"{minute_trajectory['space_start']:.3f}° → <{minute_trajectory['space_end']:.3f}°"
-    if minute_trajectory["rel_crosses_seam"]:
-        rel_range = "crosses ±180° seam"
-    else:
-        rel_range = f"{minute_trajectory['raw_rel_start']:+.3f}° → <{minute_trajectory['raw_rel_end']:+.3f}°"
-
-    q1,q2,q3 = st.columns(3)
-    q1.metric("TIME θh", time_range)
-    q2.metric("SPACE θm", space_range)
-    q3.metric("RELATIONAL", rel_range)
-
-    st.markdown(
-        """<div class="love-card"><b>AND1 • BEAT–TURN</b><br>
-        PRESENT • θs = 6s<br>
-        Available phase across the source minute: 360°<br>
-        Exact birth phase: <b>I DON’T KNOW</b><br><br>
-        <span style="font-size:.90rem;">The 60 integer-second addresses below are samples of ONE continuous trajectory, not 60 separate realities.</span>
-        </div>""",
-        unsafe_allow_html=True
-    )
-
-    with st.expander("Telescope math / recoverability", expanded=False):
-        st.markdown(
-            f"""0 ≤ s < 60
+    st.markdown("---"); st.subheader("Telescope • unknown-second magnification")
+    q1,q2,q3=st.columns(3); q1.metric("TIME θh",time_range); q2.metric("SPACE θm",space_range); q3.metric("RELATIONAL",rel_range)
+    st.markdown('''<div class="love-card"><b>AND1 • BEAT–TURN</b><br>PRESENT • θs = 6s<br>Available phase across source minute: 360°<br>Exact birth phase: <b>I DON’T KNOW</b></div>''',unsafe_allow_html=True)
+    with st.expander("Telescope math / recoverability",expanded=False): st.markdown(f'''0 ≤ s < 60
 
 θs = 6s
 
@@ -432,20 +440,12 @@ if show_second_telescope:
 
 θm = {minute_trajectory['space_start']:.3f}° + s/10
 
-{"Δθhm crosses the ±180° presentation seam in this minute; preserve wrapped orientation." if minute_trajectory["rel_crosses_seam"] else f"Δθhm = {minute_trajectory['raw_rel_start']:+.3f}° + 11s/120"}
+Unwrapped Δθhm = {minute_trajectory['raw_rel_start']:+.3f}° + 11s/120
 
 Local trajectory invariant: θm − 12θh = {minute_trajectory['local_invariant']:.3f}°
 
-This invariant is exact for this unwrapped minute trajectory; it is not promoted as a universal Ω constant.
-
-Recoverability: 60 / 60 integer-second samples remain admissible. An independently known injective phase-sensitive native value would recover s and therefore the other native clock coordinates."""
-        )
-
-    with st.expander("60 integer-second samples", expanded=False):
-        st.dataframe(second_candidates, use_container_width=True, hide_index=True)
-        st.caption(
-            "No sample is ranked or selected. The source precision remains continuous over 0 ≤ s < 60."
-        )
+Exact for this unwrapped minute trajectory; not promoted as a universal Ω constant.''')
+    with st.expander("60 integer-second samples",expanded=False): st.dataframe(second_candidates,use_container_width=True,hide_index=True)
 
 with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
     body_rows = []
@@ -487,8 +487,8 @@ st.info(
     "Port status: the frozen Calendar, full v6 audit/rabbit-hole/decimal laboratories, "
     "native clock, 72-bin resolution, typed provenance, horizontal embodied LOOK, reciprocal facing, "
     "A/B sixfold FOCUS, and reflection guard are live here. "
-    "The later 12→16/LIFT, 18/36, D13–D18+D12, seasonal/zodiac/decan/cadence and full spherical "
-    "coordinate overlays remain sovereign compiler layers to wire next; they are not faked in this build."
+    "v7.5 renders earned Calendar cadence, seasonal lanes, native clock ranges, synthesis, reciprocal girdle, and D13–D18/D12 correspondence. "
+    "Birth-specific 12→16/LIFT and 18-half-octave addresses remain explicitly uncompiled rather than back-solved."
 )
 
 st.divider()
@@ -977,6 +977,7 @@ The instrument can establish exact properties of its declared digital-root/mod-9
 
 It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
     ''')
+
 
 
 
