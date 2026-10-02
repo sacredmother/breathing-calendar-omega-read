@@ -122,20 +122,46 @@ def native_clock(t: dt.time) -> dict:
     }
 
 def unknown_second_telescope(hour24: int, minute: int) -> list[dict]:
-    """Compile all 60 lawful second-LOOKs when the source time is known only to the minute."""
-    candidates = []
+    """Sample the ONE lawful BEAT–TURN trajectory at integer-second addresses."""
+    samples = []
     for s in range(60):
         t = dt.time(hour24, minute, s)
         c = native_clock(t)
-        candidates.append({
-            "Second": s,
+        samples.append({
+            "Second sample": s,
             "TIME θh": round(c["time_angle"], 6),
             "SPACE θm": round(c["space_angle"], 6),
             "RELATIONAL": round(c["rel_angle"], 6),
-            "AND1 / TURN": round(c["turn_angle"], 6),
-            "Status": "SURVIVES",
+            "BEAT–TURN θs": round(c["turn_angle"], 6),
+            "Status": "ADMISSIBLE SAMPLE",
         })
-    return candidates
+    return samples
+
+def continuous_minute_trajectory(hour24: int, minute: int) -> dict:
+    """Exact native-clock trajectory for source precision known only to the minute."""
+    h12 = hour24 % 12
+    th0 = 30.0*h12 + 0.5*minute
+    tm0 = 6.0*minute
+    raw_rel0 = tm0 - th0
+    raw_rel1 = raw_rel0 + 5.5  # limit as s -> 60-
+    rel_crosses_seam = (
+        (raw_rel0 < -180.0 <= raw_rel1)
+        or (raw_rel1 < -180.0 <= raw_rel0)
+        or (raw_rel0 < 180.0 <= raw_rel1)
+        or (raw_rel1 < 180.0 <= raw_rel0)
+    )
+    return {
+        "time_start": th0 % 360.0,
+        "time_end": (th0 + 0.5) % 360.0,
+        "space_start": tm0 % 360.0,
+        "space_end": (tm0 + 6.0) % 360.0,
+        "raw_rel_start": raw_rel0,
+        "raw_rel_end": raw_rel1,
+        "rel_crosses_seam": rel_crosses_seam,
+        "phase_start": 0.0,
+        "phase_end": 360.0,
+        "local_invariant": tm0 - 12.0*th0,
+    }
 
 def body_look(t: dt.time) -> dict:
     # Hour-addressed horizontal body LOOK. Center C does not move.
@@ -202,7 +228,7 @@ def omega_read_child(d: dt.date, t: dt.time) -> dict:
 # ---------------------------------------------------------------------
 # CANONICAL APP SURFACE
 # ---------------------------------------------------------------------
-st.title("Breathing Calendar • Ω-READ — v7.2")
+st.title("Breathing Calendar • Ω-READ — v7.3")
 st.caption(
     "Canonical Calendar laboratory + LOVE Signature child. "
     "The Sacred Heart Sphere remains a separate app."
@@ -274,6 +300,7 @@ def display_candidate_range(values, signed=False):
 g = date_grammar(chosen_date)
 child = omega_read_child(chosen_date, chosen_time)
 second_candidates = unknown_second_telescope(hour24, minute)
+minute_trajectory = continuous_minute_trajectory(hour24, minute)
 clock_lo = second_candidates[0]
 clock_hi = second_candidates[-1]
 
@@ -301,31 +328,34 @@ st.markdown(
 st.subheader("LOVE Signature child • live Ω-READ")
 st.caption("WHEN resolution = MINUTE. Seconds are not silently replaced by :00.")
 
-time_range = display_candidate_range([r["TIME θh"] for r in second_candidates])
-space_range = display_candidate_range([r["SPACE θm"] for r in second_candidates])
-rel_range = display_candidate_range([r["RELATIONAL"] for r in second_candidates], signed=True)
+time_range = f"{minute_trajectory['time_start']:.3f}° → {minute_trajectory['time_end']:.3f}° (end open)"
+space_range = f"{minute_trajectory['space_start']:.3f}° → {minute_trajectory['space_end']:.3f}° (end open)"
+if minute_trajectory["rel_crosses_seam"]:
+    rel_range = "crosses ±180° seam — inspect samples"
+else:
+    rel_range = f"{minute_trajectory['raw_rel_start']:+.3f}° → {minute_trajectory['raw_rel_end']:+.3f}° (end open)"
 
 x1,x2,x3,x4 = st.columns(4)
 with x1:
     st.markdown(f"""<div class="range-card"><div class="range-label">TIME θh</div>
-    <div class="range-value">{time_range}</div><div class="range-note">60 second-LOOKs</div></div>""",
+    <div class="range-value">{time_range}</div><div class="range-note">continuous minute trajectory</div></div>""",
     unsafe_allow_html=True)
 with x2:
     st.markdown(f"""<div class="range-card"><div class="range-label">SPACE θm</div>
-    <div class="range-value">{space_range}</div><div class="range-note">60 second-LOOKs</div></div>""",
+    <div class="range-value">{space_range}</div><div class="range-note">continuous minute trajectory</div></div>""",
     unsafe_allow_html=True)
 with x3:
     st.markdown(f"""<div class="range-card"><div class="range-label">RELATIONAL</div>
     <div class="range-value">{rel_range}</div><div class="range-note">oriented SPACE − TIME</div></div>""",
     unsafe_allow_html=True)
 with x4:
-    st.markdown("""<div class="range-card"><div class="range-label">AND1 / TURN</div>
-    <div class="range-value">I DON’T KNOW</div><div class="range-note">second not supplied</div></div>""",
+    st.markdown("""<div class="range-card"><div class="range-label">AND1 / BEAT–TURN</div>
+    <div class="range-value">PRESENT</div><div class="range-note">birth phase unresolved</div></div>""",
     unsafe_allow_html=True)
 
 st.caption(
-    "The displayed ranges are the 60 lawful second-LOOKs inside the known minute. "
-    "AND1/TURN is unresolved because θs = 6s and no birth second was supplied."
+    "Source precision is MINUTE. The native clock therefore gives ONE continuous BEAT–TURN "
+    "trajectory with unknown birth phase; :00 is not silently assigned as the birth second."
 )
 
 b1,b2,b3,b4 = st.columns(4)
@@ -337,27 +367,54 @@ b4.metric("Sixfold FOCUS", child["body"]["focus"])
 minute_rows = [dict(r) for r in child["rows"]]
 for r in minute_rows:
     if r["LOOK"] in {"TIME", "SPACE", "RELATIONAL"}:
-        r["STATUS"] = "BOUNDED — SECOND UNKNOWN"
-        r["RECOVERABILITY"] = "60 native second-LOOKs retained"
+        r["STATUS"] = "EXACT TRAJECTORY — BIRTH PHASE UNKNOWN"
+        r["RECOVERABILITY"] = "ONE continuous s ∈ [0,60) trajectory; 60 integer-second samples admissible"
     if r["LOOK"] == "AND1 / TURN":
-        r["VALUE"] = "I DON’T KNOW"
-        r["STATUS"] = "UNRESOLVED — SECOND UNKNOWN"
-        r["RECOVERABILITY"] = "s ∈ {0…59}; θs = 6s"
+        r["VALUE"] = "PRESENT — θs = 6s"
+        r["STATUS"] = "BEAT–TURN LOCKED • BIRTH PHASE I DON’T KNOW"
+        r["RECOVERABILITY"] = "full 360° phase available; birth θs unresolved"
 st.dataframe(minute_rows, use_container_width=True, hide_index=True)
 
 if show_second_telescope:
-    st.subheader("Unknown-Second Telescope")
-    st.success("UNRESOLVED — 60 / 60 lawful second-LOOKs survive")
+    st.subheader("Unknown-Second Ω-READ")
+    st.success("ONE BEAT–TURN TRAJECTORY • BIRTH PHASE UNRESOLVED")
     st.caption(
-        "Nothing has selected a birth second. This telescope exposes the candidate field; "
-        "it does not score or guess."
+        "BEAT and TURN remain simultaneous: θs = 6s. The unknown source second removes the "
+        "birth-phase address, not the lawful BEAT–TURN relation."
     )
-    with st.expander("Open the 60-second candidate table", expanded=False):
+
+    u1,u2,u3 = st.columns(3)
+    u1.metric("Available BEAT–TURN phase", "360°")
+    u2.metric("Birth phase", "I DON’T KNOW")
+    u3.metric("Degrees of freedom", "1 • unknown s")
+
+    st.markdown(
+        f"""<div class="love-card"><b>Native trajectory • exact at minute precision</b><br>
+        0 ≤ s &lt; 60<br>
+        θs = 6s<br>
+        θh = {minute_trajectory['time_start']:.3f}° + s/120<br>
+        θm = {minute_trajectory['space_start']:.3f}° + s/10<br>
+        {"Δθhm crosses the ±180° presentation seam in this minute; preserve wrapped orientation." if minute_trajectory["rel_crosses_seam"] else f"Δθhm = {minute_trajectory['raw_rel_start']:+.3f}° + 11s/120"}<br><br>
+        <b>Local trajectory invariant</b><br>
+        θm − 12θh = {minute_trajectory['local_invariant']:.3f}°<br>
+        <span style="font-size:.88rem;">Exact for this unwrapped minute trajectory; not promoted as a universal Ω constant.</span>
+        </div>""",
+        unsafe_allow_html=True
+    )
+
+    st.info(
+        "RECOVERABILITY — 60 / 60 integer-second samples remain admissible. "
+        "They are microscope samples of ONE continuous trajectory, not 60 separate realities. "
+        "An independently known injective phase-sensitive native value would recover s and "
+        "therefore the other native clock coordinates."
+    )
+
+    with st.expander("Open 60 integer-second samples of the ONE trajectory", expanded=False):
         st.dataframe(second_candidates, use_container_width=True, hide_index=True)
         st.caption(
-            "Future gate: only an independently earned second-sensitive sovereign ruler may filter "
-            "this set. 1 survivor = RECOVERED; 2–59 = BOUNDED; 60 = UNRESOLVED; "
-            "0 = FAIL / LOOK AGAIN."
+            "No sample is ranked or selected. The table samples s = 0…59 only; the source "
+            "precision remains continuous over 0 ≤ s < 60. Winding history at the birth instant "
+            "is not recovered from minute precision alone."
         )
 
 with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
@@ -890,6 +947,7 @@ The instrument can establish exact properties of its declared digital-root/mod-9
 
 It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
     ''')
+
 
 
 
