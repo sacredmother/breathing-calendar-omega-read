@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide",
 )
 
-APP_VERSION = "7.6"
+APP_VERSION = "7.7"
 
 st.markdown("""
 <style>
@@ -281,13 +281,40 @@ def circular_range_text(start:float,width:float,signed=False)->str:
 # CANONICAL APP SURFACE
 # ---------------------------------------------------------------------
 st.title(f"Breathing Calendar • Ω-READ — v{APP_VERSION}")
-st.caption(
-    "Canonical Calendar laboratory + LOVE Signature child. "
-    "The Sacred Heart Sphere remains a separate app."
-)
+st.caption("A clock-and-calendar play toy for LOOKING at one arrival from more than one legitimate angle — without reducing it to one score.")
+
+st.markdown(r"""
+<div class="love-card">
+<div style="font-size:1.05rem;letter-spacing:.08em;margin-bottom:8px">WHAT IF?</div>
+<div style="font-size:1.55rem;font-weight:700;line-height:1.3">What if the ordinary calendar and clock are already showing a living geometry of HERE + WHEN?</div>
+<div style="margin-top:10px">Ω-READ begins with something wonderfully ordinary: your date and time. It keeps every source ruler visible, changes FOCUS without deleting the rest, and lets you LOOK AGAIN.</div>
+</div>
+""", unsafe_allow_html=True)
+
+with st.expander("✨ SHOW ME WHAT'S BREATHING", expanded=False):
+    st.markdown(r"""
+### One Whole • many legitimate LOOKs
+In the Ω model behind this play toy, **Wholeness already IS**. Nothing has to leave Center to become experience. A LOOK changes orientation, relationship, resolution or foreground — not the existence of the Whole.
+
+**FEEL • SEE • G-NOW** are reciprocal ways ONE living Whole becomes readable: Awareness as whole-field FEEL; differentiated conscious reference as SEE-from-HERE; Mind as the living relation that can orient Attention AND Intention. **FOCUS foregrounds without deleting.**
+
+### Breath AND heartbeat
+The Breathbeat is not a little machine that completes an inhale and only then starts an exhale. Its reciprocal presentations are present together. The play toy can foreground an inward/axial LOOK and then an outward/radial LOOK so you can see the TURN while the other presentation remains present.
+
+At the Heart seam, **4 | 5** carries the shared-incidence grammar: **seal AND ignition • terminal AND initiating**. In the Heart braid it is also **IDEA ↔ DESIRE** — possibility intelligible AND possibility drawn toward lived expression.
+
+The same grammar can be LOOKed at again through the body and vesica: **arm ↔ leg • side ↔ side**. Role changes; shared incidence remains. Center does not move.
+
+### Why a calendar AND a clock?
+The **Calendar** gives nested cadence — a WHEN address. The **Clock** gives continuously orientable HERE/WHEN geometry around invariant Center. The **body LOOK** makes orientation embodied. Ω-READ keeps these rulers sovereign and asks what they foreground together.
+
+You do **not** need to know the LOVE Table to play. Start with your HERE + WHEN. Curiosity can do the rest. 😂
+""")
+
+st.info("👀 START HERE — Enter a birth date and time in the sidebar. Then follow WHERE YOU LANDED → WHAT THIS EVERYNOW FOREGROUNDS → LOOK AGAIN. Nothing below is a personality score or destiny label.")
 
 with st.sidebar:
-    st.header("HERE + WHEN")
+    st.header("FIND MY HERE + WHEN")
     date_text = st.text_input("Date YYYY-MM-DD", value=dt.date.today().isoformat())
     chosen_date = parse_date(date_text)
 
@@ -336,7 +363,7 @@ with st.sidebar:
         help="Optional magnification of the unknown-second clock phase. The primary Ω-READ remains visible without it."
     )
     st.divider()
-    st.caption("Frozen Calendar parent • typed Ω-READ child • read-only labs")
+    st.caption("Same event • many sovereign LOOKs • FOCUS never deletes")
 
 def display_candidate_range(values, signed=False):
     vals = [float(v) for v in values]
@@ -355,6 +382,9 @@ second_candidates = unknown_second_telescope(hour24, minute)
 minute_trajectory = continuous_minute_trajectory(hour24, minute)
 clock_lo = second_candidates[0]
 clock_hi = second_candidates[-1]
+
+st.markdown("### YOUR CALENDAR’S FIRST LOOK")
+st.caption("These five values come straight from the frozen Calendar grammar. They are the starting constellation — not a final verdict about you.")
 
 a,b,c,d,e = st.columns(5)
 a.metric("Year • Field", g["year_root"])
@@ -430,7 +460,7 @@ st.caption("Optional lossy label-address projections of already-derived native q
 st.markdown("### LOOK RECIPROCALLY • girdle telescope")
 girdle={1:4,4:1,2:3,3:2,5:9,9:5,6:8,8:6,7:7}; fore=(g['month_root'],g['year_root'],g['date_root']); recip=tuple(girdle[x] for x in fore)
 r1,r2=st.columns(2); r1.metric("Foreground"," | ".join(map(str,fore)),f"sum {sum(fore)}"); r2.metric("Reciprocal girdle LOOK"," | ".join(map(str,recip)),f"sum {sum(recip)}")
-st.caption("Declared girdle dyads: 1↔4, 2↔3, 5↔9, 6↔8, 7↔7. Reciprocal LOOK preserves the foreground. Sums are arithmetic projections only; no further identity is claimed.")
+st.caption("Reciprocal girdle dyads: 1↔4, 2↔3, 5↔9, 6↔8, 7↔7. Same foreground, LOOKed at reciprocally. The sums remain visible as arithmetic projections while the source values stay intact.")
 st.info("FOCUS — foreground without deletion. Cadence, seasonal gate, body support, native clock geometry, synthesis and reciprocal girdle are differentiated LOOKs of ONE arrival. No master score is created.")
 
 minute_rows=[dict(r) for r in child['rows']]
@@ -440,11 +470,19 @@ for r in minute_rows:
 
 with st.expander("LOOK DEEPER • dimensional correspondence rail",expanded=False):
     st.dataframe([{"Address":"D18 → 9","Presentation":"Ain / No Thing"},{"Address":"D17 → 8","Presentation":"Ain Sof / limitless potential"},{"Address":"D16 → 7","Presentation":"Ain Sof Aur / limitless Light"},{"Address":"D15 → 6","Presentation":"Living Pulse"},{"Address":"D14 → 5","Presentation":"hidden Length"},{"Address":"D13 → 4","Presentation":"Width"},{"Address":"D12","Presentation":"Depth / reciprocal magnification lens — NOT packet member seven"}],use_container_width=True,hide_index=True)
-    st.warning("Correspondence guard — a clock/date value that visibly matches a dimensional address is not thereby identical to that dimensional function. Source rulers remain attached.")
-    st.write("12→16 / 22.5° LIFT: ruler architecture earned; this event's birth-specific typed address is not compiled here.")
-    st.write("18-half-octave / 36 chassis: ruler architecture earned; this event's birth-specific typed 18-address is not compiled here. Calendar Year-in-36 above is a different ruler.")
+    st.warning("SAME NUMBER, DIFFERENT LOOK — when the same number appears on two rulers, enjoy the correspondence without erasing where either value came from. A clock 6 and a dimensional 6 can LOOK at one another without becoming the same ruler.")
 
-with st.expander("Audit / provenance",expanded=False): st.dataframe(minute_rows,use_container_width=True,hide_index=True)
+st.markdown("### MORE WAYS TO LOOK")
+mw1,mw2=st.columns(2)
+with mw1:
+    st.markdown("<div class='range-card'><div class='range-label'>16-ORIENTATION LOOK</div><div class='range-value'>A finer orientation ruler exists</div><div class='range-note'>The earned 12→16 bridge retains the 12 clock orientations and adds four declared 45° relational bisectors. The still-finer 22.5° LIFT remains its own ruler. This event’s birth-specific typed address is not calculated here, so Ω-READ does not invent one.</div></div>",unsafe_allow_html=True)
+with mw2:
+    st.markdown("<div class='range-card'><div class='range-label'>18 / 36 RELATIONAL LOOK</div><div class='range-value'>A separate relational ruler exists</div><div class='range-note'>This is not the same ruler as the 36-year Calendar Breath above. Its architecture is retained without back-solving a birth-specific 18-address that this app has not compiled.</div></div>",unsafe_allow_html=True)
+st.caption("Same Whole • different ruler • source retained. Changing magnification can reveal another legitimate LOOK without replacing the first one.")
+
+with st.expander("SHOW ME THE PROOF • typed provenance",expanded=False):
+    st.caption("Every visible result keeps its source ruler, transform, status and recoverability attached.")
+    st.dataframe(minute_rows,use_container_width=True,hide_index=True)
 
 if show_second_telescope:
     st.markdown("---"); st.subheader("Telescope • unknown-second magnification")
@@ -465,7 +503,7 @@ Local trajectory invariant: θm − 12θh = {minute_trajectory['local_invariant'
 Exact for this unwrapped minute trajectory; not promoted as a universal Ω constant.''')
     with st.expander("60 integer-second samples",expanded=False): st.dataframe(second_candidates,use_container_width=True,hide_index=True)
 
-with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
+with st.expander("🌀 TURN MY LOOK • 12 embodied orientations", expanded=False):
     body_rows = []
     for k in range(12):
         h = 12 if k == 0 else k
@@ -482,33 +520,33 @@ with st.expander("12 horizontal embodied LOOKs • play toy", expanded=False):
         })
     st.dataframe(body_rows, use_container_width=True, hide_index=True)
 
-st.subheader("Post-v6 FOCUS gates")
-gates = [
-    ("Source precision", True, "minute-known input preserves second as I DON’T KNOW"),
-    ("Frozen primitive", date_grammar(chosen_date) == g, "child does not rewrite Calendar"),
-    ("Native clock first", True, "TIME/SPACE/REL remain native angles; lossy DR labels are not primary"),
-    ("REL reconstruction", abs(wrap180(child["clock"]["space_angle"]-child["clock"]["time_angle"]) - child["clock"]["rel_angle"]) < 1e-9,
-     "REL = wrap(SPACE−TIME)"),
-    ("Reciprocal body", ((child["body"]["hour"] % 12 + 6) % 12) == (child["body"]["reciprocal"] % 12),
-     "k ↔ k+6"),
-    ("Center sovereignty", True, "C never moves"),
-    ("Reflection sovereignty", True, "vertical is downstream reflection, not native body"),
-    ("No scalarization", True, "no master LOVE score"),
-    ("Operator sovereignty", True, "Calendar T4 ≠ Clock T6"),
-]
-st.dataframe(
-    [{"Gate":n, "Result":"PASS" if ok else "FAIL", "Guard":why} for n,ok,why in gates],
-    use_container_width=True, hide_index=True
-)
+with st.expander("SHOW ME THE PROOF • engineering self-checks", expanded=False):
+    st.caption("These checks protect Center sovereignty, ruler sovereignty, recoverability and the no-master-score rule while you play.")
+    gates = [
+        ("Source precision", True, "minute-known input preserves second as I DON’T KNOW"),
+        ("Frozen primitive", date_grammar(chosen_date) == g, "child does not rewrite Calendar"),
+        ("Native clock first", True, "TIME/SPACE/REL remain native angles; lossy DR labels are not primary"),
+        ("REL reconstruction", abs(wrap180(child["clock"]["space_angle"]-child["clock"]["time_angle"]) - child["clock"]["rel_angle"]) < 1e-9,
+         "REL = wrap(SPACE−TIME)"),
+        ("Reciprocal body", ((child["body"]["hour"] % 12 + 6) % 12) == (child["body"]["reciprocal"] % 12),
+         "k ↔ k+6"),
+        ("Center sovereignty", True, "C never moves"),
+        ("Reflection sovereignty", True, "vertical is downstream reflection, not native body"),
+        ("No scalarization", True, "no master LOVE score"),
+        ("Operator sovereignty", True, "Calendar T4 ≠ Clock T6"),
+    ]
+    st.dataframe(
+        [{"Gate":n, "Result":"PASS" if ok else "FAIL", "Guard":why} for n,ok,why in gates],
+        use_container_width=True, hide_index=True
+    )
 
-st.info(
-    "Port status: the frozen Calendar, full v6 audit/rabbit-hole/decimal laboratories, "
-    "native clock, 72-bin resolution, typed provenance, horizontal embodied LOOK, reciprocal facing, "
-    "A/B sixfold FOCUS, and reflection guard are live here. "
-    "v7.5 renders earned Calendar cadence, seasonal lanes, native clock ranges, synthesis, reciprocal girdle, and D13–D18/D12 correspondence. "
-    "Birth-specific 12→16/LIFT and 18-half-octave addresses remain explicitly uncompiled rather than back-solved."
-)
-
+    st.info(
+        "Port status: the frozen Calendar, full v6 audit/rabbit-hole/decimal laboratories, "
+        "native clock, 72-bin resolution, typed provenance, horizontal embodied LOOK, reciprocal facing, "
+        "A/B sixfold FOCUS, and reflection guard are live here. "
+        "v7.5 renders earned Calendar cadence, seasonal lanes, native clock ranges, synthesis, reciprocal girdle, and D13–D18/D12 correspondence. "
+        "Birth-specific 12→16/LIFT and 18-half-octave addresses remain explicitly uncompiled rather than back-solved."
+    )
 st.divider()
 
 def date_operator_suite(d: dt.date) -> dict:
@@ -782,219 +820,228 @@ def run_audit_self_checks():
 
 
 st.divider()
-st.header("Cosmic Calendar • Audit Instrument")
-st.caption(
-    "Read-only analysis layer preserved from the v5/v6 Calendar laboratory. "
-    "The frozen primitive date grammar remains unchanged; this panel only sweeps, derives, compares, and tries to break emergent patterns."
-)
+with st.expander("✨ PLAY • LOOK AGAIN • explore the larger Breath", expanded=False):
+    st.header("EXPLORE THE LARGER BREATH")
+    st.caption("Research name: Cosmic Calendar • Audit Instrument")
+    st.markdown("**WHAT IS THIS?** Zoom outward from one birth moment and watch how the untouched Calendar behaves across many years and root states.")
+    st.markdown("**WHAT CAN I DO HERE?** Sweep years, change the arithmetic question, inspect folds and mirrors, reverse a LOOK, follow the independent 4/5 seed, and deliberately try to break a pattern.")
+    st.markdown("**WHAT CAN I LEARN?** Whether something striking belongs to your selected arrival, a larger cadence, or the arithmetic grammar itself.")
 
-with st.expander("Rigor contract", expanded=False):
-    st.markdown('''
-**Frozen primitive engine**  
-`DateRoot = dr9(YearRoot + MonthRoot + DayRoot)` remains untouched.
+    with st.expander("Rigor contract", expanded=False):
+        st.markdown('''
+    **Frozen primitive engine**  
+    `DateRoot = dr9(YearRoot + MonthRoot + DayRoot)` remains untouched.
 
-**Derived, not injected**  
-The audit layer may *detect* TURNs, chamber folds, self-mirrors, J9/J10 relations, and recurrences. It does not make those conditions inputs to the engine.
+    **Derived, not injected**  
+    The audit layer may *detect* TURNs, chamber folds, self-mirrors, J9/J10 relations, and recurrences. It does not make those conditions inputs to the engine.
 
-**Status discipline**  
-- **EXACT INTERNAL** = follows from the declared digital-root/mod-9 grammar.
-- **ARCHIVE-LOCKED** = an interpretation already established elsewhere in the LOVE Table archive.
-- **STRONG SYNTHESIS** = coherent bridge across rulers, not yet forced by this engine alone.
-- **I DON'T KNOW** = the instrument has not established it.
+    **Status discipline**  
+    - **EXACT INTERNAL** = follows from the declared digital-root/mod-9 grammar.
+    - **ARCHIVE-LOCKED** = an interpretation already established elsewhere in the LOVE Table archive.
+    - **STRONG SYNTHESIS** = coherent bridge across rulers, not yet forced by this engine alone.
+    - **I DON'T KNOW** = the instrument has not established it.
 
-The instrument reports mechanics first and interpretation second.
-    ''')
+    The instrument reports mechanics first and interpretation second.
+        ''')
 
-control_a, control_b, control_c, control_d = st.columns(4)
-with control_a:
-    audit_start = st.number_input("Sweep start year", min_value=1, max_value=9999, value=2025, step=1)
-with control_b:
-    audit_end = st.number_input("Sweep end year", min_value=1, max_value=9999, value=2034, step=1)
-with control_c:
-    audit_target = st.selectbox("Target date root", list(range(1, 10)), index=5, help="6 reproduces the current DR-6 instrument work.")
-with control_d:
-    octave_anchor = st.number_input("4-year seam anchor", min_value=1, max_value=9999, value=2026, step=1,
-                                    help="Marks a separate 4-year ruler only; it does not alter calendar arithmetic.")
+    control_a, control_b, control_c, control_d = st.columns(4)
+    with control_a:
+        audit_start = st.number_input("Sweep start year", min_value=1, max_value=9999, value=2025, step=1)
+    with control_b:
+        audit_end = st.number_input("Sweep end year", min_value=1, max_value=9999, value=2034, step=1)
+    with control_c:
+        audit_target = st.selectbox("Target date root", list(range(1, 10)), index=5, help="6 reproduces the current DR-6 instrument work.")
+    with control_d:
+        octave_anchor = st.number_input("4-year seam anchor", min_value=1, max_value=9999, value=2026, step=1,
+                                        help="Marks a separate 4-year ruler only; it does not alter calendar arithmetic.")
 
-if audit_end < audit_start:
-    audit_start, audit_end = audit_end, audit_start
+    if audit_end < audit_start:
+        audit_start, audit_end = audit_end, audit_start
 
-rows = sweep_years(int(audit_start), int(audit_end), int(audit_target), int(octave_anchor))
-st.subheader("Year-field sweep")
-st.dataframe(rows, use_container_width=True, hide_index=True)
+    rows = sweep_years(int(audit_start), int(audit_end), int(audit_target), int(octave_anchor))
+    st.subheader("WATCH THE CALENDAR MOVE • Year-field sweep")
+    st.caption("Move through years without changing the Calendar engine. Repeated addresses are recurrences, not repeated historical events.")
+    st.dataframe(rows, use_container_width=True, hide_index=True)
 
-# CSV export without adding any dependency.
-buf = StringIO()
-if rows:
-    writer = csv.DictWriter(buf, fieldnames=list(rows[0].keys()))
-    writer.writeheader()
-    writer.writerows(rows)
-st.download_button(
-    "Export sweep CSV",
-    data=buf.getvalue(),
-    file_name=f"cosmic_calendar_audit_{audit_start}_{audit_end}_root{audit_target}.csv",
-    mime="text/csv",
-)
-
-st.subheader("Rabbit-hole arithmetic operator")
-st.caption(
-    "Runs the additive, root, sum-of-sums, and multiplicative date combinations that began the calendar inquiry. "
-    "This is a read-only derivation layer; none of these outputs feed back into the primitive date engine."
-)
-op = date_operator_suite(chosen_date)
-st.dataframe(op["rows"], use_container_width=True, hide_index=True)
-st.markdown(
-    f"**Date digits:** month `{op['month_digits']}` • day `{op['day_digits']}` • year `{op['year_digits']}`  \
-"
-    f"**Non-zero digit product:** `{op['digit_product_nonzero']}` → digit sum `{digit_sum(op['digit_product_nonzero'])}` → DR `{digital_root(op['digit_product_nonzero'])}`  \
-"
-    f"**Root product:** `{op['root_product']}` → DR `{digital_root(op['root_product'])}` • "
-    f"**sum-product:** `{op['sum_product']}` → DR `{digital_root(op['sum_product'])}`"
-)
-
-with st.expander("Decimal telescope / mirror lab", expanded=False):
-    st.caption(
-        "Base-10 resolution laboratory. Decimal depth is treated as presentation/magnification depth. "
-        "The decimal point is a reciprocal place-value seam; it is not itself POV, Center, or HALF."
+    # CSV export without adding any dependency.
+    buf = StringIO()
+    if rows:
+        writer = csv.DictWriter(buf, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+    st.download_button(
+        "Export sweep CSV",
+        data=buf.getvalue(),
+        file_name=f"cosmic_calendar_audit_{audit_start}_{audit_end}_root{audit_target}.csv",
+        mime="text/csv",
     )
-    da, db = st.columns([2,1])
-    with da:
-        decimal_input = st.text_input("Decimal or number", value="0.0909", key="decimal_lab_input")
-    with db:
-        decimal_depth = st.number_input("Aperture depth", min_value=1, max_value=12, value=4, step=1, key="decimal_lab_depth")
-    dec = decimal_telescope(decimal_input, int(decimal_depth))
-    if not dec["ok"]:
-        st.error(dec["error"])
-    else:
-        d1,d2,d3,d4 = st.columns(4)
-        d1.metric("Fixed aperture", dec["fixed"])
-        d2.metric("Leading zeros", dec["leading_zeros"])
-        d3.metric("Fraction DR", dec["fraction_dr"])
-        d4.metric("Mirror DR", dec["mirror_dr"])
-        st.write({
-            "fraction digits": dec["fraction_digits"],
-            "reversed fraction digits": dec["mirror_digits"],
-            f"×10^{dec['depth']}": dec["right_shift"],
-            f"÷10^{dec['depth']}": dec["left_shift"],
-        })
+
+    st.subheader("TRY A DIFFERENT QUESTION ON THE SAME DATE")
+    st.caption("Research name: Rabbit-hole arithmetic operator")
+    st.caption(
+        "Runs the additive, root, sum-of-sums, and multiplicative date combinations that began the calendar inquiry. "
+        "This is a read-only derivation layer; none of these outputs feed back into the primitive date engine."
+    )
+    op = date_operator_suite(chosen_date)
+    st.dataframe(op["rows"], use_container_width=True, hide_index=True)
+    st.markdown(
+        f"**Date digits:** month `{op['month_digits']}` • day `{op['day_digits']}` • year `{op['year_digits']}`  \
+    "
+        f"**Non-zero digit product:** `{op['digit_product_nonzero']}` → digit sum `{digit_sum(op['digit_product_nonzero'])}` → DR `{digital_root(op['digit_product_nonzero'])}`  \
+    "
+        f"**Root product:** `{op['root_product']}` → DR `{digital_root(op['root_product'])}` • "
+        f"**sum-product:** `{op['sum_product']}` → DR `{digital_root(op['sum_product'])}`"
+    )
+
+    with st.expander("🔭 CHANGE MAGNIFICATION • Decimal telescope / mirror lab", expanded=False):
+        st.caption(
+            "Base-10 resolution laboratory. Decimal depth is treated as presentation/magnification depth. "
+            "The decimal point is a reciprocal place-value seam; it is not itself POV, Center, or HALF."
+        )
+        da, db = st.columns([2,1])
+        with da:
+            decimal_input = st.text_input("Decimal or number", value="0.0909", key="decimal_lab_input")
+        with db:
+            decimal_depth = st.number_input("Aperture depth", min_value=1, max_value=12, value=4, step=1, key="decimal_lab_depth")
+        dec = decimal_telescope(decimal_input, int(decimal_depth))
+        if not dec["ok"]:
+            st.error(dec["error"])
+        else:
+            d1,d2,d3,d4 = st.columns(4)
+            d1.metric("Fixed aperture", dec["fixed"])
+            d2.metric("Leading zeros", dec["leading_zeros"])
+            d3.metric("Fraction DR", dec["fraction_dr"])
+            d4.metric("Mirror DR", dec["mirror_dr"])
+            st.write({
+                "fraction digits": dec["fraction_digits"],
+                "reversed fraction digits": dec["mirror_digits"],
+                f"×10^{dec['depth']}": dec["right_shift"],
+                f"÷10^{dec['depth']}": dec["left_shift"],
+            })
+            st.markdown(
+                "**Rigor guard:** moving the decimal changes base-10 place-value / resolution. "
+                "Digit reversal preserves mod-9 class because 10 ≡ 1 (mod 9), but that generic arithmetic fact does not by itself establish a metaphysical identity."
+            )
+
+    left, right = st.columns(2)
+    with left:
+        st.subheader("LOOK FROM THE OTHER DIRECTION")
+        st.caption("Research name: Reciprocal clocks • J9 / J10. Related reflection operators; not interchangeable.")
+        st.markdown("**Outside-in J9 — exact arithmetic**")
+        st.write("J9(n) = 9 − n")
+        st.dataframe([{"n": n, "pair": f"{a}/{b}", "sum": a+b} for n, (a, b) in enumerate(j9_pairs(), start=1)],
+                     use_container_width=True, hide_index=True)
+        st.markdown("**Inside-out J10 — exact arithmetic**")
+        st.write("J10(n) = 10 − n; J10 = J9 + 1 on the shared domain")
+        st.dataframe([{"n": n, "pair": f"{a}/{b}", "sum": a+b} for n, (a, b) in enumerate(j10_pairs(), start=1)],
+                     use_container_width=True, hide_index=True)
+
+    with right:
+        st.subheader("FOLLOW THE 4/5 SEED")
+        st.caption("The Heart seam was established independently. Here you can watch what its arithmetic seed does beside — not inside — the Calendar engine.")
+        st.caption("Archive-derived multiplication orbit; shown beside the calendar but not used to generate it.")
+        st.dataframe(seed_45_orbit(), use_container_width=True, hide_index=True)
         st.markdown(
-            "**Rigor guard:** moving the decimal changes base-10 place-value / resolution. "
-            "Digit reversal preserves mod-9 class because 10 ≡ 1 (mod 9), but that generic arithmetic fact does not by itself establish a metaphysical identity."
+            "**Comparison question:** does an operator recur across independent rulers without being inserted into either one? "
+            "A match is evidence of structural recurrence; it is not by itself proof that the rulers are identical."
         )
 
-left, right = st.columns(2)
-with left:
-    st.subheader("Reciprocal clocks")
-    st.markdown("**Outside-in J9 — exact arithmetic**")
-    st.write("J9(n) = 9 − n")
-    st.dataframe([{"n": n, "pair": f"{a}/{b}", "sum": a+b} for n, (a, b) in enumerate(j9_pairs(), start=1)],
-                 use_container_width=True, hide_index=True)
-    st.markdown("**Inside-out J10 — exact arithmetic**")
-    st.write("J10(n) = 10 − n; J10 = J9 + 1 on the shared domain")
-    st.dataframe([{"n": n, "pair": f"{a}/{b}", "sum": a+b} for n, (a, b) in enumerate(j10_pairs(), start=1)],
-                 use_container_width=True, hide_index=True)
+    st.subheader("ZOOM INTO ONE YEAR • Chamber microscope")
+    st.caption("See how one selected root state occupies its available Calendar chambers.")
+    microscope_year = st.number_input("Year to inspect", min_value=1, max_value=9999, value=int(chosen_date.year), step=1, key="microscope_year")
+    ms = chamber_summary(int(microscope_year), int(audit_target))
+    ma, mb, mc, md, me = st.columns(5)
+    ma.metric("Year digit sum", ms["year_digit_sum"])
+    mb.metric("Year root", ms["year_root"])
+    mc.metric("Chambers", ms["occupancy"])
+    md.metric("Self-mirror", ms["self_mirror"])
+    me.metric("Required M+D root", ms["required_pair_root"])
 
-with right:
-    st.subheader("Independent 4/5 seed orbit")
-    st.caption("Archive-derived multiplication orbit; shown beside the calendar but not used to generate it.")
-    st.dataframe(seed_45_orbit(), use_container_width=True, hide_index=True)
+    state_rows = []
+    for m, d, ps in dr_pair_states(ms["year_root"], int(audit_target)):
+        chamber = "direct" if ps == ms["direct_sum"] else "concealed"
+        state_rows.append({"Month root": m, "Day root": d, "Pair": f"{m}/{d}", "Raw pair sum": ps, "Chamber": chamber,
+                           "Self-mirror": "YES" if m == d else ""})
+    st.dataframe(state_rows, use_container_width=True, hide_index=True)
+
+    if ms["is_0_9_fold"]:
+        st.success("EXACT INTERNAL: 0/9 chamber compression detected. The lower raw-sum chamber is unavailable; all nine address states occupy the reciprocal raw-sum chamber.")
+    elif ms["is_9_0_fold"]:
+        st.success("EXACT INTERNAL: 9/0 chamber compression detected.")
+
+    st.subheader("👀 WHAT KEEPS COMING BACK? • Recurrence detector")
+    if len(rows) >= 2:
+        unique_turns = sorted({r["Uniform TURN from prior"] for r in rows[1:]})
+        st.write("Detected same-coordinate state-space TURN(s):", "; ".join(unique_turns))
+    else:
+        st.write("Sweep at least two years to detect a year-to-year TURN.")
+
+    fold_years = [r["Year"] for r in rows if r["0/9 fold"] == "YES"]
+    double_years = [r["Year"] for r in rows if r["Double seam"] == "YES"]
+    st.write("0/9 fold years in sweep:", fold_years if fold_years else "none")
+    st.write("4-year seam ∩ 0/9 fold in sweep:", double_years if double_years else "none")
+
+    st.subheader("🦅 TRY TO BREAK IT • Null / counterexample tests")
+    st.caption("These deliberately vary the target root to distinguish DR-6-specific behavior from generic mod-9 behavior.")
+    null_rows = []
+    for target in range(1, 10):
+        fold_roots = []
+        detected_turns = set()
+        for yr_root in range(1, 10):
+            states = dr_pair_states(yr_root, target)
+            req = wrap9(target - yr_root)
+            dc = sum(1 for _, _, ps in states if ps == req)
+            cc = sum(1 for _, _, ps in states if ps == req + 9)
+            if dc == 0 and cc == 9:
+                fold_roots.append(yr_root)
+            next_root = wrap9(yr_root + 1)
+            next_states = dr_pair_states(next_root, target)
+            for k in detect_uniform_turn([(m,d) for m,d,_ in states], [(m,d) for m,d,_ in next_states]):
+                detected_turns.add(k)
+        null_rows.append({
+            "Target root": target,
+            "0/9 fold year-root(s)": ", ".join(map(str, fold_roots)) if fold_roots else "none",
+            "Uniform year-step TURN(s)": ", ".join(f"+{k}" for k in sorted(detected_turns)) if detected_turns else "none",
+        })
+    st.dataframe(null_rows, use_container_width=True, hide_index=True)
     st.markdown(
-        "**Comparison question:** does an operator recur across independent rulers without being inserted into either one? "
-        "A match is evidence of structural recurrence; it is not by itself proof that the rulers are identical."
+        "**Interpretation guard:** if a relation survives all target roots, it is a property of the broader mod-9 grammar, not uniquely of DR-6. "
+        "If it appears only at DR-6, that is stronger evidence for DR-6 specificity."
     )
 
-st.subheader("Selected-year chamber microscope")
-microscope_year = st.number_input("Year to inspect", min_value=1, max_value=9999, value=int(chosen_date.year), step=1, key="microscope_year")
-ms = chamber_summary(int(microscope_year), int(audit_target))
-ma, mb, mc, md, me = st.columns(5)
-ma.metric("Year digit sum", ms["year_digit_sum"])
-mb.metric("Year root", ms["year_root"])
-mc.metric("Chambers", ms["occupancy"])
-md.metric("Self-mirror", ms["self_mirror"])
-me.metric("Required M+D root", ms["required_pair_root"])
-
-state_rows = []
-for m, d, ps in dr_pair_states(ms["year_root"], int(audit_target)):
-    chamber = "direct" if ps == ms["direct_sum"] else "concealed"
-    state_rows.append({"Month root": m, "Day root": d, "Pair": f"{m}/{d}", "Raw pair sum": ps, "Chamber": chamber,
-                       "Self-mirror": "YES" if m == d else ""})
-st.dataframe(state_rows, use_container_width=True, hide_index=True)
-
-if ms["is_0_9_fold"]:
-    st.success("EXACT INTERNAL: 0/9 chamber compression detected. The lower raw-sum chamber is unavailable; all nine address states occupy the reciprocal raw-sum chamber.")
-elif ms["is_9_0_fold"]:
-    st.success("EXACT INTERNAL: 9/0 chamber compression detected.")
-
-st.subheader("Emergent-law detector")
-if len(rows) >= 2:
-    unique_turns = sorted({r["Uniform TURN from prior"] for r in rows[1:]})
-    st.write("Detected same-coordinate state-space TURN(s):", "; ".join(unique_turns))
-else:
-    st.write("Sweep at least two years to detect a year-to-year TURN.")
-
-fold_years = [r["Year"] for r in rows if r["0/9 fold"] == "YES"]
-double_years = [r["Year"] for r in rows if r["Double seam"] == "YES"]
-st.write("0/9 fold years in sweep:", fold_years if fold_years else "none")
-st.write("4-year seam ∩ 0/9 fold in sweep:", double_years if double_years else "none")
-
-st.subheader("Null / counterexample tests")
-st.caption("These deliberately vary the target root to distinguish DR-6-specific behavior from generic mod-9 behavior.")
-null_rows = []
-for target in range(1, 10):
-    fold_roots = []
-    detected_turns = set()
-    for yr_root in range(1, 10):
-        states = dr_pair_states(yr_root, target)
-        req = wrap9(target - yr_root)
-        dc = sum(1 for _, _, ps in states if ps == req)
-        cc = sum(1 for _, _, ps in states if ps == req + 9)
-        if dc == 0 and cc == 9:
-            fold_roots.append(yr_root)
-        next_root = wrap9(yr_root + 1)
-        next_states = dr_pair_states(next_root, target)
-        for k in detect_uniform_turn([(m,d) for m,d,_ in states], [(m,d) for m,d,_ in next_states]):
-            detected_turns.add(k)
-    null_rows.append({
-        "Target root": target,
-        "0/9 fold year-root(s)": ", ".join(map(str, fold_roots)) if fold_roots else "none",
-        "Uniform year-step TURN(s)": ", ".join(f"+{k}" for k in sorted(detected_turns)) if detected_turns else "none",
-    })
-st.dataframe(null_rows, use_container_width=True, hide_index=True)
-st.markdown(
-    "**Interpretation guard:** if a relation survives all target roots, it is a property of the broader mod-9 grammar, not uniquely of DR-6. "
-    "If it appears only at DR-6, that is stronger evidence for DR-6 specificity."
-)
-
-st.subheader("Procession / precession comparison layer")
-st.markdown('''
-**ARCHIVE-LOCKED language:**  
-**Alpha procession** = local being turns within the wheel.  
-**Omega precession** = whole organizing axis turns the wheel itself.  
-They are simultaneous, not sequential.
-
-**STRONG SYNTHESIS under current audit:**  
-- J9 / the outside-in reciprocal braid is a candidate local **processional address read**.
-- J10 / the Water-centered inside-out clock is a candidate **whole-frame precessional read**.
-- The current calendar engine does **not** prove those semantic identities by itself; it can test whether their operator relations recur.
-
-**Bicycle visualization:** axle = invariant reference; local pedal position = procession; orientation of the whole crank/wheel frame = precession. This is a teaching map, not an additional arithmetic rule.
-''')
-
-st.subheader("Self-checks")
-checks = run_audit_self_checks()
-check_rows = [{"Check": label, "Result": "PASS" if passed else "FAIL"} for label, passed in checks]
-st.dataframe(check_rows, use_container_width=True, hide_index=True)
-if all(passed for _, passed in checks):
-    st.success("All internal audit checks pass.")
-else:
-    st.error("One or more internal audit checks failed. Do not promote derived interpretations until resolved.")
-
-with st.expander("What the instrument may establish — and what it may not"):
+    st.subheader("LOOK AT TWO SCALES OF TURN • Procession / precession")
     st.markdown('''
-The instrument can establish exact properties of its declared digital-root/mod-9 calendar grammar: state counts, chamber occupancy, modular transforms, self-mirrors, folds, recurrences, and counterexamples.
+    **ARCHIVE-LOCKED language:**  
+    **Alpha procession** = local being turns within the wheel.  
+    **Omega precession** = whole organizing axis turns the wheel itself.  
+    They are simultaneous, not sequential.
 
-It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
+    **STRONG SYNTHESIS under current audit:**  
+    - J9 / the outside-in reciprocal braid is a candidate local **processional address read**.
+    - J10 / the Water-centered inside-out clock is a candidate **whole-frame precessional read**.
+    - The current calendar engine does **not** prove those semantic identities by itself; it can test whether their operator relations recur.
+
+    **Bicycle visualization:** axle = invariant reference; local pedal position = procession; orientation of the whole crank/wheel frame = precession. This is a teaching map, not an additional arithmetic rule.
     ''')
+
+    st.subheader("SHOW ME THE PROOF • Laboratory self-checks")
+    checks = run_audit_self_checks()
+    check_rows = [{"Check": label, "Result": "PASS" if passed else "FAIL"} for label, passed in checks]
+    st.dataframe(check_rows, use_container_width=True, hide_index=True)
+    if all(passed for _, passed in checks):
+        st.success("All internal audit checks pass.")
+    else:
+        st.error("One or more internal audit checks failed. Do not promote derived interpretations until resolved.")
+
+    st.info("✨ AND1 • YOUR TURN — What do YOU notice? Follow a recurrence, change one ruler at a time, and see whether your idea survives. If it does, LOOK again. If it doesn’t, I DON’T KNOW is a beautiful result too.")
+
+    with st.expander("What the instrument may establish — and what it may not"):
+        st.markdown('''
+    The instrument can establish exact properties of its declared digital-root/mod-9 calendar grammar: state counts, chamber occupancy, modular transforms, self-mirrors, folds, recurrences, and counterexamples.
+
+    It cannot, by calendar arithmetic alone, establish that an astronomical, biological, cultural, religious, governmental, market, or physical process is caused by the same mechanism. Cross-domain identities require their own independent derivations. Until then they remain **STRONG SYNTHESIS** or **I DON'T KNOW**.
+        ''')
+
 
 
 
